@@ -11,3 +11,4 @@ val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
 val Orange10 = Color(android.graphics.Color.rgb(255,127,39))
+val Blue10 = Color(android.graphics.Color.rgb(63,72,204))
