@@ -1,16 +1,23 @@
 package com.example.cesk.draw_logic
 
+import android.content.ContentResolver
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.ImageDecoder
+import android.graphics.Paint
 import android.graphics.Picture
 import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Environment
+import androidx.compose.ui.platform.LocalContext
+import com.example.cesk.view_models.GroupViewModel
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.File
 import kotlin.coroutines.resume
 
-fun createBitmapFromPicture(picture: Picture): Bitmap {
+fun createBitmapFromPicture(
+    picture: Picture
+): Bitmap {
 
     val bitmap = Bitmap.createBitmap(
         picture.width,
@@ -20,7 +27,7 @@ fun createBitmapFromPicture(picture: Picture): Bitmap {
 
     val canvas = android.graphics.Canvas(bitmap)
     canvas.drawColor(android.graphics.Color.WHITE)
-        //canvas.drawPicture(picture)
+    canvas.drawPicture(picture)
     return bitmap
 }
 
@@ -35,7 +42,7 @@ suspend fun Bitmap.saveToDisk(context: Context): Uri {
     return scanFilePath(context, file.path) ?: throw Exception("File could not be saved")
 }
 
-private fun File.writeBitmap(bitmap: Bitmap, format: Bitmap.CompressFormat, quality: Int) {
+fun File.writeBitmap(bitmap: Bitmap, format: Bitmap.CompressFormat, quality: Int) {
     outputStream().use { out ->
         bitmap.compress(format, quality, out)
         out.flush()

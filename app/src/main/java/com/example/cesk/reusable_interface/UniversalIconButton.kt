@@ -27,7 +27,8 @@ import com.example.cesk.ui.theme.Green10
 fun UniversalButton(
     onClick: () -> Unit,
     iconRes: Int,
-    isActive: Boolean = false
+    isActive: Boolean = false,
+    contentDescription: String = ""
 ){
     /*Button(
         onClick = {
@@ -69,7 +70,7 @@ fun UniversalButton(
     ) {
         Icon(
             painter = painterResource(iconRes),
-            contentDescription = null,
+            contentDescription = contentDescription,
             tint = when(isActive){
                 true -> Color.White
                 false -> Color.Black

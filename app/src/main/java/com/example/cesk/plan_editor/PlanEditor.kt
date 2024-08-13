@@ -1,6 +1,9 @@
 package com.example.cesk.plan_editor
 
+import android.graphics.Bitmap
 import android.graphics.Picture
+import android.os.Handler
+import android.os.Looper
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -13,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
@@ -25,6 +29,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -36,15 +41,19 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
+import androidx.core.graphics.applyCanvas
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cesk.R
 import com.example.cesk.draw_logic.MakePoint
 import com.example.cesk.draw_logic.createBitmapFromPicture
+import com.example.cesk.draw_logic.savePdf
 import com.example.cesk.draw_logic.saveToDisk
+import com.example.cesk.draw_logic.writeBitmap
 import com.example.cesk.model.Construction
 import com.example.cesk.model.Group
 import com.example.cesk.model.enums.ClickType
@@ -57,6 +66,7 @@ import com.example.cesk.ui.theme.CESKTheme
 import com.example.cesk.ui.theme.Green10
 import com.example.cesk.view_models.GroupViewModel
 import kotlinx.coroutines.launch
+import java.io.File
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -74,7 +84,6 @@ fun PlanEditor(
 
     val picture = remember{ Picture() }
     val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
 
     var offsetX by remember { mutableFloatStateOf(0f) }
     var offsetY by remember { mutableFloatStateOf(0f) }
@@ -180,11 +189,12 @@ fun PlanEditor(
             true -> Card(
                 modifier = Modifier
                     .fillMaxHeight(),
-                shape = RectangleShape,
+                shape = RoundedCornerShape(topEnd = 10.dp, bottomEnd = 10.dp),
                 colors = CardDefaults.cardColors(containerColor = Color.White)
             ) {
                 Column (
-                    modifier = Modifier.fillMaxHeight()
+                    modifier = Modifier
+                        .fillMaxHeight()
                 ){
                     UniversalButton(
                         onClick = {
@@ -196,7 +206,8 @@ fun PlanEditor(
                         onClick = {
                             planEditorVM.setAddGroup(true)
                         },
-                        iconRes = R.drawable.plus_icon
+                        iconRes = R.drawable.plus_icon,
+                        contentDescription = "Добавить группу"
                     )
                     UniversalButton(
                         onClick = {
@@ -214,26 +225,23 @@ fun PlanEditor(
                     )
                     UniversalButton(
                         onClick = {
-                            val pdfBitmap = createBitmapFromPicture(picture)
+                            /*val pdfBitmap = createBitmapFromPicture(picture, groupVM, context)
                             coroutineScope.launch {
                                 pdfBitmap.saveToDisk(context)
-                            }
+                            }*/
+                            groupVM.getCurrentGroup()?.let { savePdf(context, picture, it) }
                             //Toast.makeText(context, "Неверное разрешение экрана", Toast.LENGTH_SHORT).show()
                         },
                         iconRes = R.drawable.save_as_pdf_icon
                     )
-                    UniversalButton(
-                        onClick = {
-                            planEditorVM.increaseCanvasScale()
-                        },
-                        iconRes = R.drawable.plus_icon
-                    )
-                    UniversalButton(
-                        onClick = {
-                            planEditorVM.decreaseCanvasScale()
-                        },
-                        iconRes = R.drawable.minus_icon
-                    )
+                    if(groupVM.getGroupList().isNotEmpty()) {
+                        Text(
+                            text = "Группы:",
+                            fontSize = 20.sp,
+                            color = Color.Gray,
+                            modifier = Modifier.padding(horizontal = 5.dp)
+                        )
+                    }
                     groupVM.getGroupList().forEach { group ->
                         Card(
                             colors = CardDefaults.cardColors(containerColor = Color.White),

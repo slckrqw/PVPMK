@@ -41,6 +41,7 @@ import com.example.cesk.model.enums.DialogType
 import com.example.cesk.reusable_interface.UniversalButton
 import com.example.cesk.ui.theme.Blue10
 import com.example.cesk.ui.theme.CESKTheme
+import com.example.cesk.ui.theme.Red10
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -150,11 +151,6 @@ fun ConstructionAddDialog(
                             onDismissRequest = { typeMenuSwitch = false }
                         ) {
                             ConstructionTypeDropDownItem(
-                                type = ConstructType.STANDARD,
-                                typeTemp = {typeTemp = it},
-                                expanded = { typeMenuSwitch = it }
-                            )
-                            ConstructionTypeDropDownItem(
                                 type = ConstructType.WALL,
                                 typeTemp = {typeTemp = it},
                                 expanded = { typeMenuSwitch = it }
@@ -201,6 +197,23 @@ fun ConstructionAddDialog(
                             color = Color.White
                         )
                     }
+                    if(dialogType == DialogType.EDIT){
+                        Button(
+                            onClick = {
+
+                            },
+                            colors = ButtonDefaults.buttonColors(containerColor = Red10),
+                            modifier = Modifier
+                                .padding(start = 10.dp, end = 10.dp, bottom = 5.dp)
+                                .fillMaxWidth()
+                        ){
+                            Text(
+                                text = "Удалить",
+                                fontSize = 15.sp,
+                                color = Color.White
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -235,5 +248,6 @@ fun ConstructionTypeDropDownItem(type: ConstructType, typeTemp: (ConstructType) 
 @Composable
 fun EditorPreview() {
     CESKTheme {
+        ConstructionAddDialog(group = Group(), construction = Construction(), dialogType = DialogType.EDIT)
     }
 }
