@@ -3,7 +3,6 @@ package com.example.cesk.plan_editor
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.example.cesk.model.enums.ClickType
 import com.example.cesk.model.enums.DialogType
 
 class PlanEditorViewModel: ViewModel() {
@@ -11,8 +10,9 @@ class PlanEditorViewModel: ViewModel() {
     private var expandTools = mutableStateOf(false)
     private var addGroup = mutableStateOf(false)
     private var addConstruction = mutableStateOf(false)
+    private var groupSettings = mutableStateOf(false)
+    private var groupsMenu = mutableStateOf(false)
 
-    private var clickType = mutableStateOf(ClickType.ADD)
     private var constructionDialogType = mutableStateOf(DialogType.ADD)
     private var groupDialogType = mutableStateOf(DialogType.ADD)
 
@@ -29,8 +29,12 @@ class PlanEditorViewModel: ViewModel() {
         addConstruction.value = value
     }
 
-    fun setClickType(value: ClickType){
-        clickType.value = value
+    fun setGroupSettings(value: Boolean){
+        groupSettings.value = value
+    }
+
+    fun setGroupsMenu(value: Boolean){
+        groupsMenu.value = value
     }
 
     fun setConstructionDialogType(value: DialogType){
@@ -52,8 +56,13 @@ class PlanEditorViewModel: ViewModel() {
     fun getAddConstruction(): Boolean {
         return addConstruction.value
     }
-    fun getClickType(): ClickType{
-        return clickType.value
+
+    fun getGroupSettings(): Boolean {
+        return groupSettings.value
+    }
+
+    fun getGroupsMenu(): Boolean{
+        return groupsMenu.value
     }
 
     fun getConstructionDialogType(): DialogType{

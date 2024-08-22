@@ -1,6 +1,7 @@
 package com.example.cesk.reusable_interface.dialogs
 
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
@@ -33,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -54,6 +56,8 @@ fun GroupDialog(
     planEditorViewModel: PlanEditorViewModel = viewModel(),
     dialogType: DialogType = DialogType.ADD
 ){
+    val context = LocalContext.current
+
     var imageUri by remember{
         mutableStateOf<Uri?>(null)
     }
@@ -62,6 +66,7 @@ fun GroupDialog(
         ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         imageUri = uri
+        Toast.makeText(context, "Изображение успешно добавлено", Toast.LENGTH_LONG).show()
     }
     var groupName by remember{
         mutableStateOf(
@@ -104,9 +109,18 @@ fun GroupDialog(
                         .height(50.dp)
                         .width(300.dp)
                         .combinedClickable(
-                            onClick = { launcher.launch("image/*") },
+                            onClick = {
+                                launcher.launch("image/*")
+                            },
                             onLongClick = {
-                                vm.getCurrentGroup()?.image = null
+                                vm.getCurrentGroup()?.image?.uri = null
+                                vm.getCurrentGroup()?.image?.id = 0
+                                imageUri = null
+                                Toast.makeText(
+                                    context,
+                                    "Изображение успешно удалено",
+                                    Toast.LENGTH_LONG
+                                ).show()
                             }
                         ),
                     shape = RoundedCornerShape(15.dp),
@@ -126,16 +140,17 @@ fun GroupDialog(
                 Button(
                     onClick = {
                         if(dialogType == DialogType.ADD){
-                            vm.addGroup(groupName, imageUri)
+                            vm.addGroup(groupName, imageUri.toString())
                             onClick()
                         }
                         else{
                             if(imageUri!=null){
-                                vm.editGroup(groupName, imageUri)
+                                vm.editGroup(groupName, imageUri.toString())
                             }
                             else vm.editGroup(groupName)
                             planEditorViewModel.setGroupDialogType(DialogType.ADD)
                             planEditorViewModel.setAddGroup(false)
+
                             onClick()
                         }
                     },

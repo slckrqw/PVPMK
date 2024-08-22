@@ -6,18 +6,40 @@ import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.graphics.Paint
 import android.graphics.Picture
+import android.graphics.pdf.PdfDocument
 import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Environment
+import android.widget.Toast
+import androidx.compose.ui.graphics.asComposePaint
 import androidx.compose.ui.platform.LocalContext
+import com.example.cesk.model.Group
+import com.example.cesk.model.enums.ConstructType
 import com.example.cesk.view_models.GroupViewModel
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.File
 import kotlin.coroutines.resume
 
-fun createBitmapFromPicture(
-    picture: Picture
-): Bitmap {
+fun savePdf(
+    context: Context,
+    picture: Picture,
+    currentGroup: Group
+) {
+
+    val target = if(currentGroup.image.id == 0){
+        Bitmap.createBitmap(
+            picture.width,
+            picture.height,
+            Bitmap.Config.ARGB_8888
+        )
+    }else{
+
+        val contentResolver: ContentResolver = context.contentResolver
+        val groupImage = Uri.parse(currentGroup.image.uri)
+        val source = groupImage.let { ImageDecoder.createSource(contentResolver, it) }
+        val imageBitmap = source.let { ImageDecoder.decodeBitmap(it)}
+        imageBitmap.copy(Bitmap.Config.ARGB_8888, false)
+    }
 
     val bitmap = Bitmap.createBitmap(
         picture.width,
@@ -25,42 +47,59 @@ fun createBitmapFromPicture(
         Bitmap.Config.ARGB_8888
     )
 
-    val canvas = android.graphics.Canvas(bitmap)
-    canvas.drawColor(android.graphics.Color.WHITE)
-    canvas.drawPicture(picture)
-    return bitmap
-}
+    val pdfDocument = PdfDocument()
+    val pageInfo = PdfDocument.PageInfo.Builder(bitmap.width, bitmap.height, 1).create()
+    val page = pdfDocument.startPage(pageInfo)
+    val canvas = page.canvas
 
-suspend fun Bitmap.saveToDisk(context: Context): Uri {
-    val file = File(
-        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-        "screenshot-${System.currentTimeMillis()}.png"
-    )
-
-    file.writeBitmap(this, Bitmap.CompressFormat.PNG, 100)
-
-    return scanFilePath(context, file.path) ?: throw Exception("File could not be saved")
-}
-
-fun File.writeBitmap(bitmap: Bitmap, format: Bitmap.CompressFormat, quality: Int) {
-    outputStream().use { out ->
-        bitmap.compress(format, quality, out)
-        out.flush()
+    if (target != null) {
+        canvas.drawBitmap(target, 0f, 0f, null)
     }
-}
 
-private suspend fun scanFilePath(context: Context, filePath: String): Uri? {
-    return suspendCancellableCoroutine { continuation ->
-        MediaScannerConnection.scanFile(
-            context,
-            arrayOf(filePath),
-            arrayOf("image/png")
-        ) { _, scannedUri ->
-            if (scannedUri == null) {
-                continuation.cancel(Exception("File $filePath could not be scanned"))
-            } else {
-                continuation.resume(scannedUri)
+    val pointPaint = Paint()
+    pointPaint.asComposePaint()
+    pointPaint.isAntiAlias = true
+    pointPaint.style = Paint.Style.FILL_AND_STROKE
+    pointPaint.setARGB(255,255,127,39)
+
+    val textPaint = Paint()
+    textPaint.textSize = 45f
+    textPaint.setARGB(255, 0, 0, 0)
+
+    val rectPaint = Paint()
+    rectPaint.setARGB(255,255,255,255)
+
+    currentGroup.constructions.forEach {
+        canvas.drawRect(
+            it.point.x!!,
+            it.point.y!!,
+            it.point.x!! + 200f,
+            it.point.y!! + 200f,
+            rectPaint
+        )
+        canvas.drawCircle(
+            it.point.x!!,
+            it.point.y!!,
+            20f,
+            pointPaint
+        )
+        canvas.drawText(
+            when(it.type) {
+                ConstructType.NOTHING -> "Н "
+                ConstructType.WALL -> "Ст "
+                ConstructType.PLATE -> "Пл "
             }
-        }
+                    + it.averageEndurance.toString(),
+            it.point.x!!+15,
+            it.point.y!!+45,
+            textPaint
+        )
     }
+    pdfDocument.finishPage(page)
+
+    val file = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "group-${currentGroup.name}.pdf")
+    pdfDocument.writeTo(file.outputStream())
+    pdfDocument.close()
+
+    Toast.makeText(context, "PDF saved at ${file.absolutePath}", Toast.LENGTH_LONG).show()
 }

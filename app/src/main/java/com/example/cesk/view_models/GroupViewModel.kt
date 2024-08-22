@@ -6,9 +6,10 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import com.example.cesk.model.Group
+import com.example.cesk.model.Image
 
 class GroupViewModel: ViewModel() {
-    private val groupList: SnapshotStateList<Group> = mutableStateListOf()
+    private var groupList: MutableList<Group> = mutableListOf()
     private var currentIndex = mutableIntStateOf(0)
 
     fun setIndex(index: Int){
@@ -18,6 +19,9 @@ class GroupViewModel: ViewModel() {
         return currentIndex.intValue
     }
 
+    fun setGroupList(value: MutableList<Group>){
+        groupList = value
+    }
     fun getGroupList(): List<Group>{
         return groupList
     }
@@ -26,7 +30,10 @@ class GroupViewModel: ViewModel() {
             it.index == currentIndex.intValue
         }
     }
-    fun addGroup(name: String, image: Uri?){
+    fun addGroup(
+        name: String,
+        uri: String? = null
+    ){
         var index = (2..1000).random()
         if(groupList.isNotEmpty()){
             while(!groupList.none{
@@ -36,6 +43,14 @@ class GroupViewModel: ViewModel() {
                 index = (2..1000).random()
             }
         }
+
+        val image = Image(
+            id = if(!uri.isNullOrEmpty()){
+                1
+            }else 0,
+            uri = uri
+        )
+
         groupList.add(
             Group(name, image, index = index)
         )
@@ -43,10 +58,16 @@ class GroupViewModel: ViewModel() {
 
     fun editGroup(
         name: String,
-        image: Uri? = getCurrentGroup()?.image
+        uri: String? = null
     ){
         getCurrentGroup()?.name = name
-        getCurrentGroup()?.image = image
+
+        getCurrentGroup()?.let{
+            it.image.uri = uri
+            it.image.id = if(uri.isNullOrEmpty()){
+                  0
+            }else 1
+        }
     }
     fun deleteGroup(){
         groupList.remove(
@@ -54,5 +75,6 @@ class GroupViewModel: ViewModel() {
                 it.index == currentIndex.intValue
             }
         )
+        currentIndex.intValue = 0
     }
 }

@@ -1,6 +1,8 @@
 package com.example.cesk.model.enums
 
-enum class ConstructType(val value: String?) {
+import java.io.Serializable
+
+enum class ConstructType(val value: String?):Serializable {
     NOTHING(null),
     WALL("Стена"),
     PLATE("Плита")

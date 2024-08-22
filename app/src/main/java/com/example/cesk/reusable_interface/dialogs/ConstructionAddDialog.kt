@@ -33,11 +33,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cesk.R
 import com.example.cesk.model.enums.ConstructType
 import com.example.cesk.model.Construction
 import com.example.cesk.model.Group
 import com.example.cesk.model.enums.DialogType
+import com.example.cesk.plan_editor.PlanEditorViewModel
 import com.example.cesk.reusable_interface.UniversalButton
 import com.example.cesk.ui.theme.Blue10
 import com.example.cesk.ui.theme.CESKTheme
@@ -52,7 +55,6 @@ fun ConstructionAddDialog(
     construction: Construction,
     dialogType: DialogType
 ){
-
     var typeTemp by remember{
         mutableStateOf(ConstructType.NOTHING)
     }
@@ -71,6 +73,9 @@ fun ConstructionAddDialog(
         mutableStateOf(false)
     }
     var typeMenuSwitch by remember{
+        mutableStateOf(false)
+    }
+    var deleteConstruction by remember{
         mutableStateOf(false)
     }
 
@@ -200,7 +205,7 @@ fun ConstructionAddDialog(
                     if(dialogType == DialogType.EDIT){
                         Button(
                             onClick = {
-
+                                deleteConstruction = true
                             },
                             colors = ButtonDefaults.buttonColors(containerColor = Red10),
                             modifier = Modifier
@@ -222,6 +227,13 @@ fun ConstructionAddDialog(
         EnduranceDialog(
             expanded = {chooseEndurance = it},
             construction = construction
+        )
+    }
+    if(deleteConstruction){
+        ConstructionDeleteDialog(
+            group = group,
+            construction = construction,
+            onClick = onCLick
         )
     }
 }
