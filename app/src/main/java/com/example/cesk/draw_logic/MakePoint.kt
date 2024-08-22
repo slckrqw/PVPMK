@@ -45,10 +45,9 @@ fun MakePoint(
     val context = LocalContext.current 
     val contentResolver: ContentResolver = context.contentResolver
 
-    var groupImage: Uri? = null
-    groupViewModel.getCurrentGroup()?.image?.let{
-        groupImage = Uri.parse(groupViewModel.getCurrentGroup()?.image)
-    }
+    val groupImage: Uri? = if(groupViewModel.getCurrentGroup()?.image == "null"){
+        null
+    }else Uri.parse(groupViewModel.getCurrentGroup()?.image)
 
     var imageBitmap: ImageBitmap? = null
     try {

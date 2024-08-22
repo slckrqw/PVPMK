@@ -26,29 +26,23 @@ fun savePdf(
     currentGroup: Group
 ) {
 
-    val target = if(currentGroup.image.id == 0){
+    val target = if(currentGroup.image == "null"){
         Bitmap.createBitmap(
             picture.width,
             picture.height,
             Bitmap.Config.ARGB_8888
         )
     }else{
-
         val contentResolver: ContentResolver = context.contentResolver
-        val groupImage = Uri.parse(currentGroup.image.uri)
+        val groupImage = Uri.parse(currentGroup.image)
         val source = groupImage.let { ImageDecoder.createSource(contentResolver, it) }
         val imageBitmap = source.let { ImageDecoder.decodeBitmap(it)}
         imageBitmap.copy(Bitmap.Config.ARGB_8888, false)
     }
 
-    val bitmap = Bitmap.createBitmap(
-        picture.width,
-        picture.height,
-        Bitmap.Config.ARGB_8888
-    )
 
     val pdfDocument = PdfDocument()
-    val pageInfo = PdfDocument.PageInfo.Builder(bitmap.width, bitmap.height, 1).create()
+    val pageInfo = PdfDocument.PageInfo.Builder(target.width, target.height, 1).create()
     val page = pdfDocument.startPage(pageInfo)
     val canvas = page.canvas
 

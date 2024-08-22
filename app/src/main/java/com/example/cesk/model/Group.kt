@@ -7,7 +7,7 @@ import java.io.Serializable
 
 data class Group(
     var name: String = "",
-    var image: Image = Image(),
+    var image: String = "null",
     val constructions: MutableList<Construction> = mutableListOf(),
     var index: Int = 0
 ):Serializable

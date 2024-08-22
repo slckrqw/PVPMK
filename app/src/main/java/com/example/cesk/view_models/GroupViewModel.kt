@@ -1,12 +1,8 @@
 package com.example.cesk.view_models
 
-import android.net.Uri
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import com.example.cesk.model.Group
-import com.example.cesk.model.Image
 
 class GroupViewModel: ViewModel() {
     private var groupList: MutableList<Group> = mutableListOf()
@@ -32,7 +28,7 @@ class GroupViewModel: ViewModel() {
     }
     fun addGroup(
         name: String,
-        uri: String? = null
+        image: String = "null"
     ){
         var index = (2..1000).random()
         if(groupList.isNotEmpty()){
@@ -44,13 +40,6 @@ class GroupViewModel: ViewModel() {
             }
         }
 
-        val image = Image(
-            id = if(!uri.isNullOrEmpty()){
-                1
-            }else 0,
-            uri = uri
-        )
-
         groupList.add(
             Group(name, image, index = index)
         )
@@ -58,16 +47,10 @@ class GroupViewModel: ViewModel() {
 
     fun editGroup(
         name: String,
-        uri: String? = null
+        image: String = "null"
     ){
         getCurrentGroup()?.name = name
-
-        getCurrentGroup()?.let{
-            it.image.uri = uri
-            it.image.id = if(uri.isNullOrEmpty()){
-                  0
-            }else 1
-        }
+        getCurrentGroup()?.image = image
     }
     fun deleteGroup(){
         groupList.remove(

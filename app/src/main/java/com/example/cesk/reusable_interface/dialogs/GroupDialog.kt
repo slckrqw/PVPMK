@@ -1,5 +1,8 @@
 package com.example.cesk.reusable_interface.dialogs
 
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -48,6 +51,7 @@ import com.example.cesk.ui.theme.Blue10
 import com.example.cesk.ui.theme.Green10
 import com.example.cesk.view_models.GroupViewModel
 
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun GroupDialog(
@@ -58,14 +62,20 @@ fun GroupDialog(
 ){
     val context = LocalContext.current
 
+
     var imageUri by remember{
         mutableStateOf<Uri?>(null)
     }
+
     val launcher = rememberLauncherForActivityResult(
         contract =
         ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         imageUri = uri
+        val contentResolver = context.contentResolver
+        imageUri?.let {
+            contentResolver.takePersistableUriPermission(it, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
         Toast.makeText(context, "Изображение успешно добавлено", Toast.LENGTH_LONG).show()
     }
     var groupName by remember{
@@ -113,8 +123,7 @@ fun GroupDialog(
                                 launcher.launch("image/*")
                             },
                             onLongClick = {
-                                vm.getCurrentGroup()?.image?.uri = null
-                                vm.getCurrentGroup()?.image?.id = 0
+                                vm.getCurrentGroup()?.image = "null"
                                 imageUri = null
                                 Toast.makeText(
                                     context,

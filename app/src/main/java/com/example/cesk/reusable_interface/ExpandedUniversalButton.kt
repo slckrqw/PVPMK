@@ -32,6 +32,13 @@ fun ExpandedUniversalButton(
     text: String,
     containerColor: Color = Color.White
 ){
+    val contentColor = if(containerColor!= Color.White){
+        Color.White
+    }
+    else{
+        Color.Black
+    }
+
     Button(
         onClick = onClick,
         modifier = Modifier
@@ -52,12 +59,7 @@ fun ExpandedUniversalButton(
             Icon(
                 painter = painterResource(iconRes),
                 contentDescription = null,
-                tint = if(containerColor!= Color.White){
-                    Color.White
-                }
-                else{
-                    Color.Black
-                },
+                tint = contentColor,
                 modifier = Modifier
                     .padding(horizontal = 5.dp)
                     .size(25.dp)
@@ -65,12 +67,7 @@ fun ExpandedUniversalButton(
             Text(
                 text = text,
                 modifier = Modifier.padding(5.dp),
-                color = if(containerColor!= Color.White){
-                    Color.White
-                }
-                else{
-                    Color.Black
-                },
+                color = contentColor,
                 fontSize = 17.sp
             )
         }
