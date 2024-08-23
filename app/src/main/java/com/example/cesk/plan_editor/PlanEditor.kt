@@ -1,15 +1,9 @@
 package com.example.cesk.plan_editor
 
-import android.Manifest
-import android.app.Activity
-import android.content.pm.PackageManager
 import android.graphics.Picture
 import android.os.Build
 import android.os.Environment
-import android.util.Log
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -29,7 +23,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
@@ -61,8 +54,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cesk.R
 import com.example.cesk.draw_logic.MakePoint
@@ -78,15 +69,12 @@ import com.example.cesk.ui.theme.CESKTheme
 import com.example.cesk.ui.theme.Green10
 import com.example.cesk.ui.theme.Purple10
 import com.example.cesk.view_models.GroupViewModel
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.rememberPermissionState
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 
-@OptIn(ExperimentalPermissionsApi::class)
 @RequiresApi(Build.VERSION_CODES.R)
 @Composable
 fun PlanEditor(
@@ -101,34 +89,13 @@ fun PlanEditor(
         mutableStateOf(Construction())
     }
 
-    val picture = remember{ Picture() }
+    val picture = remember{
+        Picture()
+    }
     val context = LocalContext.current
 
-    val permissionArray = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+    //val permission = rememberPermissionState(permission = Manifest.permission.READ_MEDIA_IMAGES)
 
-    val permission = rememberPermissionState(permission = Manifest.permission.READ_MEDIA_IMAGES)
-
-    val requestPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) {isGranted: Boolean ->
-        if(isGranted){
-            val file = File(
-                Environment.getExternalStoragePublicDirectory(
-                    Environment.DIRECTORY_DOWNLOADS),"test.txt")
-            val fileStream = FileInputStream(file)
-            val inStream = ObjectInputStream(fileStream)
-
-            // Method for deserialization of object
-            val item = inStream.readObject() as MutableList<Group>
-
-            groupVM.setGroupList(item)
-
-            inStream.close()
-            fileStream.close()
-        }
-        else  Toast.makeText(context, "Требуется разрешение", Toast.LENGTH_LONG).show()
-    }
-    val activity = (LocalContext.current as? Activity)
 
     var offsetX by remember { mutableFloatStateOf(0f) }
     var offsetY by remember { mutableFloatStateOf(0f) }
@@ -256,7 +223,7 @@ fun PlanEditor(
                                     Environment.getExternalStoragePublicDirectory(
                                         Environment.DIRECTORY_DOWNLOADS),"test.txt")
 
-                                val fileStream = FileOutputStream(file) // here should be a full path and name
+                                val fileStream = FileOutputStream(file)
                                 val outStream = ObjectOutputStream(fileStream)
 
                                 outStream.writeObject(groupVM.getGroupList())
@@ -275,7 +242,6 @@ fun PlanEditor(
                                 val fileStream = FileInputStream(file)
                                 val inStream = ObjectInputStream(fileStream)
 
-                                // Method for deserialization of object
                                 val item = inStream.readObject() as MutableList<Group>
 
                                 groupVM.setGroupList(item)
@@ -285,9 +251,6 @@ fun PlanEditor(
                             },
                             iconRes = R.drawable.open_file
                         )
-                        Button(onClick = {permission.launchPermissionRequest()}) {
-                            
-                        }
                     }
                 }
 
@@ -342,7 +305,7 @@ fun PlanEditor(
                                     Environment.getExternalStoragePublicDirectory(
                                         Environment.DIRECTORY_DOWNLOADS),"PVPMK/test.txt")
 
-                                val fileStream = FileOutputStream(file) // here should be a full path and name
+                                val fileStream = FileOutputStream(file)
                                 val outStream = ObjectOutputStream(fileStream)
 
                                 outStream.writeObject(groupVM.getGroupList())
@@ -394,7 +357,10 @@ fun PlanEditor(
                                 verticalAlignment = Alignment.CenterVertically
                             ){
                                 UniversalButton(
-                                    onClick = {planEditorVM.setGroupsMenu(false)},
+                                    onClick = {
+                                        planEditorVM
+                                            .setGroupsMenu(false)
+                                    },
                                     iconRes = R.drawable.right_arrow_icon,
                                     containerColor = Purple10
                                 )
@@ -408,7 +374,8 @@ fun PlanEditor(
 
                                 ExpandedUniversalButton(
                                     onClick = {
-                                        planEditorVM.setAddGroup(true)
+                                        planEditorVM
+                                            .setAddGroup(true)
                                     },
                                     iconRes = R.drawable.plus_icon,
                                     text = "Добавить группу"
@@ -538,6 +505,5 @@ fun PlanEditor(
 @Composable
 fun EditorPreview() {
     CESKTheme {
-        PlanEditor()
     }
 }

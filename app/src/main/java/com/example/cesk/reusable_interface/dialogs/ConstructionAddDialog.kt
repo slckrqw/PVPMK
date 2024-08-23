@@ -33,14 +33,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cesk.R
 import com.example.cesk.model.enums.ConstructType
 import com.example.cesk.model.Construction
 import com.example.cesk.model.Group
 import com.example.cesk.model.enums.DialogType
-import com.example.cesk.plan_editor.PlanEditorViewModel
 import com.example.cesk.reusable_interface.UniversalButton
 import com.example.cesk.ui.theme.Blue10
 import com.example.cesk.ui.theme.CESKTheme
@@ -53,7 +51,8 @@ fun ConstructionAddDialog(
     onCLick: () -> Unit = {},
     group: Group,
     construction: Construction,
-    dialogType: DialogType
+    dialogType: DialogType,
+    constructionDialogViewModel: ConstructionDialogViewModel = viewModel()
 ){
     var typeTemp by remember{
         mutableStateOf(ConstructType.NOTHING)
@@ -61,6 +60,7 @@ fun ConstructionAddDialog(
     var noteTemp by remember{
         mutableStateOf(construction.note)
     }
+
     var averageEndurance by remember{
         mutableDoubleStateOf(0.0)
     }
@@ -68,16 +68,6 @@ fun ConstructionAddDialog(
         (construction.tests.sum()/construction.tests.size)
     }
     else 0.0
-
-    var chooseEndurance by remember{
-        mutableStateOf(false)
-    }
-    var typeMenuSwitch by remember{
-        mutableStateOf(false)
-    }
-    var deleteConstruction by remember{
-        mutableStateOf(false)
-    }
 
     Dialog(
         onDismissRequest = {
@@ -121,7 +111,10 @@ fun ConstructionAddDialog(
                     )
                     Row{
                         UniversalButton(
-                            onClick = { chooseEndurance = true },
+                            onClick = {
+                                constructionDialogViewModel
+                                    .setEnduranceAddDialog(true)
+                            },
                             iconRes = R.drawable.plus_icon
                         )
                     }
@@ -134,7 +127,10 @@ fun ConstructionAddDialog(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Button(
-                        onClick = { typeMenuSwitch = true },
+                        onClick = {
+                            constructionDialogViewModel
+                                .setTypeMenuSwitch(true)
+                        },
                         colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                         border = BorderStroke(1.dp, Color.Black),
                         modifier = Modifier
@@ -152,18 +148,28 @@ fun ConstructionAddDialog(
                             )
                         }
                         DropdownMenu(
-                            expanded = typeMenuSwitch,
-                            onDismissRequest = { typeMenuSwitch = false }
+                            expanded = constructionDialogViewModel
+                                .getTypeMenuSwitch(),
+                            onDismissRequest = {
+                                constructionDialogViewModel
+                                    .setTypeMenuSwitch(false)
+                            }
                         ) {
                             ConstructionTypeDropDownItem(
                                 type = ConstructType.WALL,
                                 typeTemp = {typeTemp = it},
-                                expanded = { typeMenuSwitch = it }
+                                onClick = {
+                                    constructionDialogViewModel
+                                        .setTypeMenuSwitch(false)
+                                }
                             )
                             ConstructionTypeDropDownItem(
                                 type = ConstructType.PLATE,
                                 typeTemp = {typeTemp = it},
-                                expanded = { typeMenuSwitch = it }
+                                onClick = {
+                                    constructionDialogViewModel
+                                        .setTypeMenuSwitch(false)
+                                }
                             )
                         }
                     }
@@ -205,7 +211,8 @@ fun ConstructionAddDialog(
                     if(dialogType == DialogType.EDIT){
                         Button(
                             onClick = {
-                                deleteConstruction = true
+                                constructionDialogViewModel
+                                    .setConstructionDeleteDialog(true)
                             },
                             colors = ButtonDefaults.buttonColors(containerColor = Red10),
                             modifier = Modifier
@@ -223,23 +230,33 @@ fun ConstructionAddDialog(
             }
         }
     }
-    if(chooseEndurance){
+    if(constructionDialogViewModel.getEnduranceAddDialog()){
         EnduranceDialog(
-            expanded = {chooseEndurance = it},
+            onClick = {
+                constructionDialogViewModel
+                    .setEnduranceAddDialog(false)
+            },
             construction = construction
         )
     }
-    if(deleteConstruction){
+    if(constructionDialogViewModel.getConstructionDeleteDialog()){
         ConstructionDeleteDialog(
             group = group,
             construction = construction,
-            onClick = onCLick
+            onClick = {
+                constructionDialogViewModel
+                    .setConstructionDeleteDialog(false)
+            }
         )
     }
 }
 
 @Composable
-fun ConstructionTypeDropDownItem(type: ConstructType, typeTemp: (ConstructType) -> Unit, expanded: (Boolean) -> Unit){
+fun ConstructionTypeDropDownItem(
+    type: ConstructType,
+    typeTemp: (ConstructType) -> Unit,
+    onClick: () -> Unit
+){
     DropdownMenuItem(
         text = {
             type.value?.let {
@@ -251,7 +268,7 @@ fun ConstructionTypeDropDownItem(type: ConstructType, typeTemp: (ConstructType) 
         modifier = Modifier.width(150.dp),
         onClick = {
             typeTemp(type)
-            expanded(false)
+            onClick()
         }
     )
 }

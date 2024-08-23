@@ -1,7 +1,5 @@
 package com.example.cesk.model
 
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.example.cesk.model.enums.ConstructType
 import java.io.Serializable
 

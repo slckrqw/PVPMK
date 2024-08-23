@@ -13,6 +13,7 @@ class PlanEditorViewModel: ViewModel() {
     private var groupSettings = mutableStateOf(false)
     private var groupsMenu = mutableStateOf(false)
 
+
     private var constructionDialogType = mutableStateOf(DialogType.ADD)
     private var groupDialogType = mutableStateOf(DialogType.ADD)
 
@@ -75,13 +76,5 @@ class PlanEditorViewModel: ViewModel() {
 
     fun getCanvasScale(): Float{
         return canvasScale.floatValue
-    }
-
-    fun increaseCanvasScale(){
-        canvasScale.floatValue += 0.1f
-    }
-
-    fun decreaseCanvasScale(){
-        canvasScale.floatValue -= 0.1f
     }
 }

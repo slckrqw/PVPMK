@@ -1,15 +1,8 @@
 package com.example.cesk.draw_logic
 
 import android.content.ContentResolver
-import android.content.Context
-import android.graphics.Bitmap
 import android.graphics.ImageDecoder
-import android.graphics.Paint
-import android.graphics.Picture
-import android.graphics.pdf.PdfDocument
 import android.net.Uri
-import android.os.Environment
-import android.widget.Toast
 import androidx.compose.foundation.Canvas
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -17,7 +10,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asComposePaint
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.platform.LocalContext
@@ -26,12 +18,10 @@ import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.cesk.model.Group
 import com.example.cesk.model.enums.ConstructType
 import com.example.cesk.plan_editor.PlanEditorViewModel
 import com.example.cesk.ui.theme.Orange10
 import com.example.cesk.view_models.GroupViewModel
-import java.io.File
 import java.io.IOException
 
 @Composable

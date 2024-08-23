@@ -66,7 +66,9 @@ fun ConstructionDeleteDialog(
                        containerColor = Green10
                    )
                    AgreeButton(
-                       onClick = { onClick() },
+                       onClick = {
+                             onClick()
+                       },
                        text = "Нет",
                        containerColor = Red10
                    )
