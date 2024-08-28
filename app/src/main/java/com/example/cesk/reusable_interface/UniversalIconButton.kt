@@ -42,7 +42,8 @@ fun UniversalButton(
             else{
                 Color.Black
             },
-            modifier = Modifier.size(25.dp)
+            modifier = Modifier
+                .size(25.dp)
         )
     }
 }

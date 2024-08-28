@@ -91,7 +91,10 @@ fun savePdf(
     }
     pdfDocument.finishPage(page)
 
-    val file = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "group-${currentGroup.name}.pdf")
+    val file = File(
+        context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS),
+        "group-${currentGroup.name}.pdf"
+    )
     pdfDocument.writeTo(file.outputStream())
     pdfDocument.close()
 
