@@ -4,10 +4,13 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -42,7 +45,9 @@ fun StartScreen(
                 contentDescription = null
             )
             Button(
-                onClick = {},
+                onClick = {
+                      navController.navigate(Screen.PlanEditor.route)
+                },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Purple10
                 )
@@ -61,6 +66,52 @@ fun StartScreen(
 @Composable
 fun StartScreenPreview() {
     CESKTheme {
-
+        val filesList: List<String> = listOf()
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White),
+            contentAlignment = Alignment.Center
+        ) {
+            Row {
+                LazyColumn {
+                    item{
+                        Text(
+                            text = "Список файлов:",
+                            fontSize = 25.sp
+                        )
+                    }
+                    items(filesList.size){file ->
+                        Card{
+                            Text(
+                                text = filesList[file]
+                            )
+                        }
+                    }
+                }
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.cesk_mipmap),
+                        modifier = Modifier.size(250.dp),
+                        contentDescription = null
+                    )
+                    Button(
+                        onClick = {
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Purple10
+                        )
+                    ) {
+                        Text(
+                            text = "Начать",
+                            color = Color.White,
+                            fontSize = 20.sp
+                        )
+                    }
+                }
+            }
+        }
     }
 }

@@ -11,8 +11,8 @@ class PlanEditorViewModel: ViewModel() {
     private var addGroup = mutableStateOf(false)
     private var addConstruction = mutableStateOf(false)
     private var groupSettings = mutableStateOf(false)
-    private var groupsMenu = mutableStateOf(false)
-
+    private var groupsMenu = mutableStateOf(true)
+    private var fileSaveDialog = mutableStateOf(false)
 
     private var constructionDialogType = mutableStateOf(DialogType.ADD)
     private var groupDialogType = mutableStateOf(DialogType.ADD)
@@ -36,6 +36,10 @@ class PlanEditorViewModel: ViewModel() {
 
     fun setGroupsMenu(value: Boolean){
         groupsMenu.value = value
+    }
+
+    fun setFileSaveDialog(value: Boolean){
+        fileSaveDialog.value = value
     }
 
     fun setConstructionDialogType(value: DialogType){
@@ -64,6 +68,10 @@ class PlanEditorViewModel: ViewModel() {
 
     fun getGroupsMenu(): Boolean{
         return groupsMenu.value
+    }
+
+    fun getFileSaveDialog(): Boolean{
+        return fileSaveDialog.value
     }
 
     fun getConstructionDialogType(): DialogType{

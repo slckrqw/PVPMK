@@ -2,10 +2,8 @@ package com.example.cesk.plan_editor
 
 import android.Manifest
 import android.graphics.Picture
-import android.os.Build
 import android.os.Environment
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -51,31 +49,30 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import com.example.cesk.R
 import com.example.cesk.draw_logic.MakePoint
+import com.example.cesk.draw_logic.saveAsCNC
 import com.example.cesk.draw_logic.savePdf
 import com.example.cesk.model.Construction
 import com.example.cesk.model.Group
 import com.example.cesk.model.enums.DialogType
-import com.example.cesk.navigation.Screen
 import com.example.cesk.reusable_interface.ExpandedUniversalButton
 import com.example.cesk.reusable_interface.UniversalButton
 import com.example.cesk.reusable_interface.dialogs.ConstructionAddDialog
+import com.example.cesk.reusable_interface.dialogs.FileSaveDialog
 import com.example.cesk.reusable_interface.dialogs.GroupDialog
 import com.example.cesk.ui.theme.CESKTheme
 import com.example.cesk.ui.theme.Green10
 import com.example.cesk.ui.theme.Purple10
 import com.example.cesk.view_models.GroupViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import com.google.accompanist.permissions.rememberPermissionState
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -87,7 +84,6 @@ import java.io.ObjectOutputStream
 fun PlanEditor(
     groupVM: GroupViewModel = viewModel(),
     planEditorVM: PlanEditorViewModel = viewModel(),
-    navController: NavController
 ) {
 
     var currentGroup by remember{
@@ -225,19 +221,29 @@ fun PlanEditor(
                         )
                         UniversalButton(
                             onClick = {
-                                filePermission.launchMultiplePermissionRequest()
                                 if(filePermission.allPermissionsGranted) {
                                     groupVM.getCurrentGroup()?.let {
                                         savePdf(context, picture, it)
                                     }
                                 }
-                                else Toast.makeText(context, "Для создания PDF требуется разрешение", Toast.LENGTH_LONG).show()
+                                else {
+                                    Toast.makeText(context, "Для создания PDF требуется разрешение", Toast.LENGTH_LONG).show()
+                                    filePermission.launchMultiplePermissionRequest()
+                                }
                             },
                             iconRes = R.drawable.pdf_convert
                         )
                         UniversalButton(
                             onClick = {
-                                filePermission.launchMultiplePermissionRequest()
+                                saveAsCNC(
+                                    groupList = groupVM.getGroupList(),
+                                    context = context
+                                )
+                            },
+                            iconRes = R.drawable.cnc_convert
+                        )
+                        UniversalButton(
+                            onClick = {
                                 if(filePermission.allPermissionsGranted) {
                                     val file = File(
                                         context
@@ -259,7 +265,10 @@ fun PlanEditor(
                                         Toast.LENGTH_LONG
                                     ).show()
                                 }
-                                else Toast.makeText(context, "Для сохранения файла требуется разрешение", Toast.LENGTH_LONG).show()
+                                else {
+                                    Toast.makeText(context, "Для сохранения файла требуется разрешение", Toast.LENGTH_LONG).show()
+                                    filePermission.launchMultiplePermissionRequest()
+                                }
                             },
                             iconRes = R.drawable.save_as_pdf_icon
                         )
@@ -282,8 +291,12 @@ fun PlanEditor(
 
                                     inStream.close()
                                     fileStream.close()
+                                    Toast.makeText(context, "Файл ${file.name} успешно открыт!", Toast.LENGTH_LONG).show()
                                 }
-                                else Toast.makeText(context, "Для открытия файла требуется разрешение", Toast.LENGTH_LONG).show()
+                                else {
+                                    Toast.makeText(context, "Для открытия файла требуется разрешение", Toast.LENGTH_LONG).show()
+                                    filePermission.launchMultiplePermissionRequest()
+                                }
                             },
                             iconRes = R.drawable.open_file
                         )
@@ -330,25 +343,17 @@ fun PlanEditor(
                         )
                         ExpandedUniversalButton(
                             onClick = {
-
-                                val dir = File(
-                                    Environment.getExternalStoragePublicDirectory(
-                                        Environment.DIRECTORY_DOWNLOADS),"PVPMK"
+                                saveAsCNC(
+                                    groupList = groupVM.getGroupList(),
+                                    context = context
                                 )
-                                dir.mkdir()
-
-                                val file = File(
-                                    Environment.getExternalStoragePublicDirectory(
-                                        Environment.DIRECTORY_DOWNLOADS),"PVPMK/test.txt")
-
-                                val fileStream = FileOutputStream(file)
-                                val outStream = ObjectOutputStream(fileStream)
-
-                                outStream.writeObject(groupVM.getGroupList())
-                                outStream.close()
-                                fileStream.close()
-
-                                Toast.makeText(context, "Файл сохранён как ${file.absolutePath}", Toast.LENGTH_LONG).show()
+                            },
+                            iconRes = R.drawable.cnc_convert,
+                            text = "Экспорт в CNC"
+                        )
+                        ExpandedUniversalButton(
+                            onClick = {
+                                planEditorVM.setFileSaveDialog(true)
                             },
                             iconRes = R.drawable.save_as_pdf_icon,
                             text = "Сохранить файл"
@@ -378,7 +383,7 @@ fun PlanEditor(
                 Card(
                     modifier = Modifier
                         .fillMaxHeight()
-                        .width(180.dp),
+                        .width(300.dp),
                     shape = RoundedCornerShape(topStart = 10.dp, bottomStart = 10.dp),
                     colors = CardDefaults.cardColors(containerColor = Color.White)
                 ){
@@ -406,6 +411,7 @@ fun PlanEditor(
                             Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
+                                    .padding(bottom = 10.dp)
                             ){
 
                                 ExpandedUniversalButton(
@@ -414,98 +420,117 @@ fun PlanEditor(
                                             .setAddGroup(true)
                                     },
                                     iconRes = R.drawable.plus_icon,
-                                    text = "Добавить группу"
+                                    text = "Добавить"
                                 )
                                 Text(
                                     text = "Группы:",
-                                    fontSize = 17.sp,
+                                    fontSize = 20.sp,
                                     color = Color.Black,
-                                    modifier = Modifier.padding(start = 5.dp)
+                                    modifier = Modifier.padding(start = 10.dp)
                                 )
                             }
                         }
-                        items(groupVM.getGroupList()){group ->
-                            Card(
-                                colors = CardDefaults.cardColors(containerColor = Color.White),
-                                border = BorderStroke(
-                                    1.dp,
-                                    if (group.index == groupVM.getIndex()) {
-                                        Green10
-                                    } else Color.LightGray
-                                ),
-                                modifier = Modifier
-                                    .clickable(
-                                        onClick = {
-                                            groupVM.setIndex(group.index)
-                                            currentGroup = groupVM
-                                                .getGroupList()
-                                                .first {
-                                                    it.index == groupVM.getIndex()
-                                                }
-                                        },
-                                    )
-                                    .height(40.dp)
-                                    .width(200.dp),
-                                shape = RectangleShape
-                            ) {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    IconButton(
-                                        onClick = {
-                                            groupVM.setIndex(group.index)
-                                            planEditorVM.setGroupSettings(true)
-                                        }
-                                    ) {
-                                        Icon(
-                                            painter = painterResource(R.drawable.dots),
-                                            contentDescription = null,
-                                            modifier = Modifier.size(30.dp),
-                                            tint = Color.Gray
-                                        )
-                                    }
+                        if(groupVM.getGroupList().isEmpty()){
+                            item{
+                                Column(
+                                    modifier = Modifier.fillMaxSize(),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.Center
+                                ){
                                     Text(
-                                        text = group.name,
-                                        fontSize = 15.sp,
-                                        color = Color.Gray,
-                                        modifier = Modifier.padding(end = 10.dp)
+                                        text = "Их пока нет :(",
+                                        fontSize = 20.sp,
+                                        color = Color.Gray
                                     )
                                 }
-                                DropdownMenu(
-                                    expanded = planEditorVM.getGroupSettings()
-                                            && group.index == groupVM.getIndex(),
-                                    onDismissRequest = {
-                                        planEditorVM.setGroupSettings(false)
-                                    }
+                            }
+                        }
+                        else {
+                            items(groupVM.getGroupList()) { group ->
+                                Card(
+                                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                                    border = BorderStroke(
+                                        1.dp,
+                                        if (group.index == groupVM.getIndex()) {
+                                            Green10
+                                        } else Color.LightGray
+                                    ),
+                                    modifier = Modifier
+                                        .clickable(
+                                            onClick = {
+                                                groupVM.setIndex(group.index)
+                                                currentGroup = groupVM
+                                                    .getGroupList()
+                                                    .first {
+                                                        it.index == groupVM.getIndex()
+                                                    }
+                                            },
+                                        )
+                                        .height(60.dp)
+                                        .fillMaxWidth(),
+                                    shape = RectangleShape
                                 ) {
-                                    DropdownMenuItem(
-                                        text = {
-                                            Text(
-                                                text = "Редактировать"
+                                    Row(
+                                        modifier = Modifier.fillMaxSize(),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        IconButton(
+                                            onClick = {
+                                                groupVM.setIndex(group.index)
+                                                planEditorVM.setGroupSettings(true)
+                                            }
+                                        ) {
+                                            Icon(
+                                                painter = painterResource(R.drawable.dots),
+                                                contentDescription = null,
+                                                modifier = Modifier.size(30.dp),
+                                                tint = Color.Gray
                                             )
-                                        },
-                                        onClick = {
-                                            planEditorVM.setGroupDialogType(DialogType.EDIT)
-                                            groupVM.setIndex(group.index)
-                                            planEditorVM.setAddGroup(true)
+                                        }
+                                        Text(
+                                            text = group.name,
+                                            fontSize = 17.sp,
+                                            color = Color.Gray,
+                                            modifier = Modifier.padding(end = 10.dp),
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis
+                                        )
+                                    }
+                                    DropdownMenu(
+                                        expanded = planEditorVM.getGroupSettings()
+                                                && group.index == groupVM.getIndex(),
+                                        onDismissRequest = {
                                             planEditorVM.setGroupSettings(false)
                                         }
-                                    )
-                                    DropdownMenuItem(
-                                        text = {
-                                            Text(
-                                                text = "Удалить"
-                                            )
-                                        },
-                                        onClick = {
-                                            currentGroup = group
-                                            groupVM.setIndex(group.index)
-                                            groupVM.deleteGroup()
-                                            planEditorVM.setGroupSettings(false)
-                                        }
-                                    )
+                                    ) {
+                                        DropdownMenuItem(
+                                            text = {
+                                                Text(
+                                                    text = "Редактировать"
+                                                )
+                                            },
+                                            onClick = {
+                                                planEditorVM.setGroupDialogType(DialogType.EDIT)
+                                                groupVM.setIndex(group.index)
+                                                planEditorVM.setAddGroup(true)
+                                                planEditorVM.setGroupSettings(false)
+                                            }
+                                        )
+                                        DropdownMenuItem(
+                                            text = {
+                                                Text(
+                                                    text = "Удалить"
+                                                )
+                                            },
+                                            onClick = {
+                                                currentGroup = group
+                                                groupVM.setIndex(group.index)
+                                                groupVM.deleteGroup()
+                                                planEditorVM.setGroupSettings(false)
+                                            }
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -535,11 +560,20 @@ fun PlanEditor(
             )
         }
     }
+    if(planEditorVM.getFileSaveDialog()){
+        FileSaveDialog(
+            onClick = {
+                planEditorVM.setFileSaveDialog(false)
+            },
+            groupList = groupVM.getGroupList()
+        )
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun EditorPreview() {
     CESKTheme {
+        PlanEditor()
     }
 }

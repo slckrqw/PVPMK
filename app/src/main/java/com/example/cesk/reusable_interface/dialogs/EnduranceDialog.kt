@@ -7,11 +7,15 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -22,6 +26,8 @@ import androidx.compose.ui.window.Dialog
 import com.example.cesk.R
 import com.example.cesk.model.Construction
 import com.example.cesk.ui.theme.CESKTheme
+import kotlinx.coroutines.android.awaitFrame
+import kotlinx.coroutines.delay
 
 @Composable
 fun EnduranceDialog(
@@ -30,6 +36,17 @@ fun EnduranceDialog(
 ){
     var endurance by remember{
         mutableStateOf("")
+    }
+
+    val showKeyboard = remember { mutableStateOf(true) }
+    val focusRequester = remember { FocusRequester() }
+    val keyboard = LocalSoftwareKeyboardController.current
+    LaunchedEffect(focusRequester) {
+        if (showKeyboard.value) {
+            focusRequester.requestFocus()
+            awaitFrame()
+            keyboard?.show()
+        }
     }
 
     Dialog(
@@ -62,7 +79,8 @@ fun EnduranceDialog(
                     }
                     onClick()
                 }
-            )
+            ),
+            modifier = Modifier.focusRequester(focusRequester)
         )
     }
 }

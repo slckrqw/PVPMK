@@ -62,11 +62,11 @@ fun GroupDialog(
         ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         imageUri = uri
-        val contentResolver = context.contentResolver
+        /*val contentResolver = context.contentResolver
         imageUri?.let {
             contentResolver.takePersistableUriPermission(it, Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
             contentResolver.takePersistableUriPermission(it, Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        }
+        }*/
         Toast.makeText(context, "Изображение успешно добавлено", Toast.LENGTH_LONG).show()
     }
 

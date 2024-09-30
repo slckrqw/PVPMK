@@ -85,7 +85,7 @@ fun ConstructionAddDialog(
                 Column(
                     modifier = Modifier
                         .padding(horizontal = 5.dp, vertical = 10.dp)
-                        .width(100.dp),
+                        .width(120.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     construction.tests.forEach {
@@ -104,7 +104,7 @@ fun ConstructionAddDialog(
                         )
                     }
                     Text(
-                        text = "Ср: " + averageEndurance.roundToInt().toString() + " МПа",
+                        text = "Ср: " + "${Math.round(averageEndurance * 10.0) / 10.0}" + " МПа",
                         fontSize = 17.sp,
                         color = Color.Black,
                         modifier = Modifier.padding(bottom = 10.dp)
@@ -194,7 +194,7 @@ fun ConstructionAddDialog(
                         onClick = {
                             construction.type = typeTemp
                             construction.note = noteTemp
-                            construction.averageEndurance = averageEndurance
+                            construction.averageEndurance = Math.round(averageEndurance * 10.0) / 10.0 //round to tenths
                             onCLick()
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = Blue10),
