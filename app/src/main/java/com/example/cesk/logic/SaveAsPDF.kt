@@ -1,4 +1,4 @@
-package com.example.cesk.draw_logic
+package com.example.cesk.logic
 
 import android.content.ContentResolver
 import android.content.Context
@@ -7,18 +7,13 @@ import android.graphics.ImageDecoder
 import android.graphics.Paint
 import android.graphics.Picture
 import android.graphics.pdf.PdfDocument
-import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Environment
 import android.widget.Toast
 import androidx.compose.ui.graphics.asComposePaint
-import androidx.compose.ui.platform.LocalContext
 import com.example.cesk.model.Group
 import com.example.cesk.model.enums.ConstructType
-import com.example.cesk.view_models.GroupViewModel
-import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.File
-import kotlin.coroutines.resume
 
 fun savePdf(
     context: Context,
@@ -91,12 +86,24 @@ fun savePdf(
     }
     pdfDocument.finishPage(page)
 
+    val dir = File(
+        context.getExternalFilesDir(
+            Environment.DIRECTORY_DOCUMENTS
+        ), "PVPMK"
+    )
+    dir.mkdir()
+
     val file = File(
-        context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS),
-        "group-${currentGroup.name}.pdf"
+        context.getExternalFilesDir(
+            Environment.DIRECTORY_DOCUMENTS
+        ), "PVPMK/${currentGroup.name}.pdf"
     )
     pdfDocument.writeTo(file.outputStream())
     pdfDocument.close()
 
-    Toast.makeText(context, "PDF saved at ${file.absolutePath}", Toast.LENGTH_LONG).show()
+    Toast.makeText(
+        context,
+        "PDF saved at ${file.absolutePath}",
+        Toast.LENGTH_LONG
+    ).show()
 }

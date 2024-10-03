@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.example.cesk.model.enums.DialogType
+import com.example.cesk.model.enums.FileAccessType
 
 class PlanEditorViewModel: ViewModel() {
 
@@ -11,11 +12,12 @@ class PlanEditorViewModel: ViewModel() {
     private var addGroup = mutableStateOf(false)
     private var addConstruction = mutableStateOf(false)
     private var groupSettings = mutableStateOf(false)
-    private var groupsMenu = mutableStateOf(true)
-    private var fileSaveDialog = mutableStateOf(false)
+    private var groupsMenu = mutableStateOf(false)
+    private var fileAccessDialog = mutableStateOf(false)
 
     private var constructionDialogType = mutableStateOf(DialogType.ADD)
     private var groupDialogType = mutableStateOf(DialogType.ADD)
+    private var fileAccess = mutableStateOf(FileAccessType.SAVE)
 
     private var canvasScale = mutableFloatStateOf(1.0f)
 
@@ -38,8 +40,11 @@ class PlanEditorViewModel: ViewModel() {
         groupsMenu.value = value
     }
 
-    fun setFileSaveDialog(value: Boolean){
-        fileSaveDialog.value = value
+    fun setFileAccessDialog(value: Boolean){
+        fileAccessDialog.value = value
+    }
+    fun setFileAccess(value: FileAccessType){
+        fileAccess.value = value
     }
 
     fun setConstructionDialogType(value: DialogType){
@@ -70,9 +75,12 @@ class PlanEditorViewModel: ViewModel() {
         return groupsMenu.value
     }
 
-    fun getFileSaveDialog(): Boolean{
-        return fileSaveDialog.value
+    fun getFileAccessDialog(): Boolean{
+        return fileAccessDialog.value
     }
+   fun getFileAccess(): FileAccessType{
+       return fileAccess.value
+   }
 
     fun getConstructionDialogType(): DialogType{
         return constructionDialogType.value

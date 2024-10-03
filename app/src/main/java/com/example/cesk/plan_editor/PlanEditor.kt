@@ -56,16 +56,17 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cesk.R
-import com.example.cesk.draw_logic.MakePoint
-import com.example.cesk.draw_logic.saveAsCNC
-import com.example.cesk.draw_logic.savePdf
+import com.example.cesk.logic.MakePoint
+import com.example.cesk.logic.saveAsCNC
+import com.example.cesk.logic.savePdf
 import com.example.cesk.model.Construction
 import com.example.cesk.model.Group
 import com.example.cesk.model.enums.DialogType
+import com.example.cesk.model.enums.FileAccessType
 import com.example.cesk.reusable_interface.ExpandedUniversalButton
 import com.example.cesk.reusable_interface.UniversalButton
 import com.example.cesk.reusable_interface.dialogs.ConstructionAddDialog
-import com.example.cesk.reusable_interface.dialogs.FileSaveDialog
+import com.example.cesk.reusable_interface.dialogs.FileAccessDialog
 import com.example.cesk.reusable_interface.dialogs.GroupDialog
 import com.example.cesk.ui.theme.CESKTheme
 import com.example.cesk.ui.theme.Green10
@@ -227,75 +228,73 @@ fun PlanEditor(
                                     }
                                 }
                                 else {
-                                    Toast.makeText(context, "Для создания PDF требуется разрешение", Toast.LENGTH_LONG).show()
-                                    filePermission.launchMultiplePermissionRequest()
+                                    Toast.makeText(
+                                        context,
+                                        "Для создания PDF требуется разрешение",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+
+                                    filePermission
+                                        .launchMultiplePermissionRequest()
                                 }
                             },
                             iconRes = R.drawable.pdf_convert
                         )
                         UniversalButton(
                             onClick = {
-                                saveAsCNC(
-                                    groupList = groupVM.getGroupList(),
-                                    context = context
-                                )
+                                if(filePermission.allPermissionsGranted) {
+                                    saveAsCNC(
+                                        groupList = groupVM.getGroupList(),
+                                        context = context
+                                    )
+                                }
+                                else{
+                                    Toast.makeText(
+                                        context,
+                                        "Для создания CNC требуется разрешение",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+
+                                    filePermission
+                                        .launchMultiplePermissionRequest()
+                                }
                             },
                             iconRes = R.drawable.cnc_convert
                         )
                         UniversalButton(
                             onClick = {
                                 if(filePermission.allPermissionsGranted) {
-                                    val file = File(
-                                        context
-                                            .getExternalFilesDir(
-                                                Environment.DIRECTORY_DOCUMENTS
-                                            ), "test.txt"
-                                    )
-
-                                    val fileStream = FileOutputStream(file)
-                                    val outStream = ObjectOutputStream(fileStream)
-
-                                    outStream.writeObject(groupVM.getGroupList())
-                                    outStream.close()
-                                    fileStream.close()
-
-                                    Toast.makeText(
-                                        context,
-                                        "Файл сохранён как ${file.absolutePath}",
-                                        Toast.LENGTH_LONG
-                                    ).show()
+                                    planEditorVM.setFileAccess(FileAccessType.SAVE)
+                                    planEditorVM.setFileAccessDialog(true)
                                 }
                                 else {
-                                    Toast.makeText(context, "Для сохранения файла требуется разрешение", Toast.LENGTH_LONG).show()
-                                    filePermission.launchMultiplePermissionRequest()
+                                    Toast.makeText(
+                                        context,
+                                        "Для сохранения файла требуется разрешение",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+
+                                    filePermission
+                                        .launchMultiplePermissionRequest()
                                 }
                             },
                             iconRes = R.drawable.save_as_pdf_icon
                         )
                         UniversalButton(
                             onClick = {
-                                filePermission.launchMultiplePermissionRequest()
                                 if(filePermission.allPermissionsGranted) {
-                                    val file = File(
-                                        context
-                                            .getExternalFilesDir(
-                                                Environment.DIRECTORY_DOCUMENTS
-                                            ), "test.txt"
-                                    )
-                                    val fileStream = FileInputStream(file)
-                                    val inStream = ObjectInputStream(fileStream)
-
-                                    val item = inStream.readObject() as MutableList<Group>
-
-                                    groupVM.setGroupList(item)
-
-                                    inStream.close()
-                                    fileStream.close()
-                                    Toast.makeText(context, "Файл ${file.name} успешно открыт!", Toast.LENGTH_LONG).show()
+                                    planEditorVM.setFileAccess(FileAccessType.OPEN)
+                                    planEditorVM.setFileAccessDialog(true)
                                 }
                                 else {
-                                    Toast.makeText(context, "Для открытия файла требуется разрешение", Toast.LENGTH_LONG).show()
-                                    filePermission.launchMultiplePermissionRequest()
+                                    Toast.makeText(
+                                        context,
+                                        "Для открытия файла требуется разрешение",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+
+                                    filePermission
+                                         .launchMultiplePermissionRequest()
                                 }
                             },
                             iconRes = R.drawable.open_file
@@ -343,35 +342,62 @@ fun PlanEditor(
                         )
                         ExpandedUniversalButton(
                             onClick = {
-                                saveAsCNC(
-                                    groupList = groupVM.getGroupList(),
-                                    context = context
-                                )
+                                if(filePermission.allPermissionsGranted) {
+                                    saveAsCNC(
+                                        groupList = groupVM.getGroupList(),
+                                        context = context
+                                    )
+                                }
+                                else{
+                                    Toast.makeText(
+                                        context,
+                                        "Для создания CNC требуется разрешение",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+
+                                    filePermission
+                                        .launchMultiplePermissionRequest()
+                                }
                             },
                             iconRes = R.drawable.cnc_convert,
                             text = "Экспорт в CNC"
                         )
                         ExpandedUniversalButton(
                             onClick = {
-                                planEditorVM.setFileSaveDialog(true)
+                                if(filePermission.allPermissionsGranted) {
+                                    planEditorVM.setFileAccess(FileAccessType.SAVE)
+                                    planEditorVM.setFileAccessDialog(true)
+                                }
+                                else {
+                                    Toast.makeText(
+                                        context,
+                                        "Для сохранения файла требуется разрешение",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+
+                                    filePermission
+                                        .launchMultiplePermissionRequest()
+                                }
                             },
                             iconRes = R.drawable.save_as_pdf_icon,
                             text = "Сохранить файл"
                         )
                         ExpandedUniversalButton(
                             onClick = {
-                                val file = File(
-                                    Environment.getExternalStoragePublicDirectory(
-                                        Environment.DIRECTORY_DOWNLOADS),"test.txt")
-                                val fileStream = FileInputStream(file)
-                                val inStream = ObjectInputStream(fileStream)
+                                if(filePermission.allPermissionsGranted) {
+                                    planEditorVM.setFileAccess(FileAccessType.OPEN)
+                                    planEditorVM.setFileAccessDialog(true)
+                                }
+                                else {
+                                    Toast.makeText(
+                                        context,
+                                        "Для открытия файла требуется разрешение",
+                                        Toast.LENGTH_LONG
+                                    ).show()
 
-                                val item = inStream.readObject() as MutableList<Group>
-
-                                groupVM.setGroupList(item)
-
-                                inStream.close()
-                                fileStream.close()
+                                    filePermission
+                                        .launchMultiplePermissionRequest()
+                                }
                             },
                             iconRes = R.drawable.open_file,
                             text = "Открыть файл"
@@ -560,13 +586,14 @@ fun PlanEditor(
             )
         }
     }
-    if(planEditorVM.getFileSaveDialog()){
-        FileSaveDialog(
-            onClick = {
-                planEditorVM.setFileSaveDialog(false)
-            },
-            groupList = groupVM.getGroupList()
-        )
+    if(planEditorVM.getFileAccessDialog()){
+       FileAccessDialog(
+           onClick = {
+               planEditorVM
+                   .setFileAccessDialog(false)
+           },
+           accessType = planEditorVM.getFileAccess()
+       )
     }
 }
 

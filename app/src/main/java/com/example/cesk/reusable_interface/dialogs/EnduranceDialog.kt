@@ -32,7 +32,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun EnduranceDialog(
     onClick: () -> Unit = {},
-    construction: Construction = Construction()
+    testsList: MutableList<Double>
 ){
     var endurance by remember{
         mutableStateOf("")
@@ -75,7 +75,8 @@ fun EnduranceDialog(
             keyboardActions = KeyboardActions(
                 onDone = {
                     if(endurance != "") {
-                        construction.tests.add(endurance.toDouble())
+                       testsList
+                           .add(endurance.toDouble())
                     }
                     onClick()
                 }
@@ -89,6 +90,5 @@ fun EnduranceDialog(
 @Composable
 fun EndurancePreview() {
     CESKTheme {
-        EnduranceDialog()
     }
 }

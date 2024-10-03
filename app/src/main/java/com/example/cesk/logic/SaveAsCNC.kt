@@ -1,4 +1,4 @@
-package com.example.cesk.draw_logic
+package com.example.cesk.logic
 
 import android.content.Context
 import android.os.Environment
@@ -63,11 +63,17 @@ fun saveAsCNC(
             tempString += "\n"
         }
 
+        val dir = File(
+            context.getExternalFilesDir(
+                Environment.DIRECTORY_DOCUMENTS
+            ), "PVPMK"
+        )
+        dir.mkdir()
+
         val file = File(
-            context
-                .getExternalFilesDir(
-                    Environment.DIRECTORY_DOCUMENTS
-                ), "test.cnc"
+            context.getExternalFilesDir(
+                Environment.DIRECTORY_DOCUMENTS
+            ), "PVPMK/${System.currentTimeMillis()}.cnc"
         )
 
         val fileStream = FileOutputStream(file)

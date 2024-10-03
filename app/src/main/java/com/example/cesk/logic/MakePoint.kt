@@ -1,4 +1,4 @@
-package com.example.cesk.draw_logic
+package com.example.cesk.logic
 
 import android.content.ContentResolver
 import android.graphics.ImageDecoder

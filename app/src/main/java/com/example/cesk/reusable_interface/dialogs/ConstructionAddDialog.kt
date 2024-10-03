@@ -25,6 +25,7 @@ import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,7 +44,6 @@ import com.example.cesk.reusable_interface.UniversalButton
 import com.example.cesk.ui.theme.Blue10
 import com.example.cesk.ui.theme.CESKTheme
 import com.example.cesk.ui.theme.Red10
-import kotlin.math.roundToInt
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -64,8 +64,15 @@ fun ConstructionAddDialog(
     var averageEndurance by remember{
         mutableDoubleStateOf(0.0)
     }
-    averageEndurance = if(construction.tests.isNotEmpty()){
-        (construction.tests.sum()/construction.tests.size)
+    val testsList = remember{
+        SnapshotStateList<Double>()
+    }
+    construction.tests.forEach {
+        testsList.add(it)
+    }
+
+    averageEndurance = if(testsList.isNotEmpty()){
+        (testsList.sum()/testsList.size)
     }
     else 0.0
 
@@ -88,7 +95,7 @@ fun ConstructionAddDialog(
                         .width(120.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    construction.tests.forEach {
+                    testsList.forEach {
                         Text(
                             text = it.toString(),
                             fontSize = 15.sp,
@@ -98,7 +105,7 @@ fun ConstructionAddDialog(
                                 .combinedClickable(
                                     onClick = {},
                                     onLongClick = {
-                                        construction.tests.remove(it)
+                                        testsList.remove(it)
                                     }
                                 )
                         )
@@ -195,6 +202,7 @@ fun ConstructionAddDialog(
                             construction.type = typeTemp
                             construction.note = noteTemp
                             construction.averageEndurance = Math.round(averageEndurance * 10.0) / 10.0 //round to tenths
+                            construction.tests = testsList
                             onCLick()
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = Blue10),
@@ -236,7 +244,7 @@ fun ConstructionAddDialog(
                 constructionDialogViewModel
                     .setEnduranceAddDialog(false)
             },
-            construction = construction
+            testsList = testsList
         )
     }
     if(constructionDialogViewModel.getConstructionDeleteDialog()){
