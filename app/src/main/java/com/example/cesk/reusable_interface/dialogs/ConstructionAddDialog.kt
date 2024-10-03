@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -26,6 +27,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,6 +46,7 @@ import com.example.cesk.reusable_interface.UniversalButton
 import com.example.cesk.ui.theme.Blue10
 import com.example.cesk.ui.theme.CESKTheme
 import com.example.cesk.ui.theme.Red10
+import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -65,10 +68,7 @@ fun ConstructionAddDialog(
         mutableDoubleStateOf(0.0)
     }
     val testsList = remember{
-        SnapshotStateList<Double>()
-    }
-    construction.tests.forEach {
-        testsList.add(it)
+        construction.tests.toMutableStateList()
     }
 
     averageEndurance = if(testsList.isNotEmpty()){
@@ -89,15 +89,15 @@ fun ConstructionAddDialog(
                 .width(525.dp)
         ) {
             Row {
-                Column(
+                LazyColumn(
                     modifier = Modifier
                         .padding(horizontal = 5.dp, vertical = 10.dp)
                         .width(120.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    testsList.forEach {
+                    items(testsList.size) {
                         Text(
-                            text = it.toString(),
+                            text = testsList[it].toString(),
                             fontSize = 15.sp,
                             color = Color.Black,
                             modifier = Modifier
@@ -105,18 +105,20 @@ fun ConstructionAddDialog(
                                 .combinedClickable(
                                     onClick = {},
                                     onLongClick = {
-                                        testsList.remove(it)
+                                        testsList.removeAt(it)
                                     }
                                 )
                         )
                     }
-                    Text(
-                        text = "Ср: " + "${Math.round(averageEndurance * 10.0) / 10.0}" + " МПа",
-                        fontSize = 17.sp,
-                        color = Color.Black,
-                        modifier = Modifier.padding(bottom = 10.dp)
-                    )
-                    Row{
+                    item {
+                        Text(
+                            text = "Ср: " + "${Math.round(averageEndurance * 10.0) / 10.0}" + " МПа",
+                            fontSize = 17.sp,
+                            color = Color.Black,
+                            modifier = Modifier.padding(bottom = 10.dp)
+                        )
+                    }
+                    item {
                         UniversalButton(
                             onClick = {
                                 constructionDialogViewModel
@@ -202,7 +204,7 @@ fun ConstructionAddDialog(
                             construction.type = typeTemp
                             construction.note = noteTemp
                             construction.averageEndurance = Math.round(averageEndurance * 10.0) / 10.0 //round to tenths
-                            construction.tests = testsList
+                            construction.tests = testsList.toMutableList()
                             onCLick()
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = Blue10),
@@ -244,7 +246,8 @@ fun ConstructionAddDialog(
                 constructionDialogViewModel
                     .setEnduranceAddDialog(false)
             },
-            testsList = testsList
+            testsList = testsList,
+            construction = construction
         )
     }
     if(constructionDialogViewModel.getConstructionDeleteDialog()){
