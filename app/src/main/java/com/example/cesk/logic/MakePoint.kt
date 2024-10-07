@@ -64,6 +64,11 @@ fun MakePoint(
                             ConstructType.NOTHING -> "Н "
                             ConstructType.WALL -> "Ст "
                             ConstructType.PLATE -> "Пл "
+                            ConstructType.BEAM -> "Б "
+                            ConstructType.COLUMN -> "К "
+                            ConstructType.FOUNDATION -> "Ф "
+                            ConstructType.MONOLITHIC -> "Мб "
+                            ConstructType.PYLON -> "П "
                         } + it.averageEndurance.toString(),
                         style = TextStyle(fontSize = 28.sp)
                     )

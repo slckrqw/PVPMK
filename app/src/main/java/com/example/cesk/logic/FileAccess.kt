@@ -17,14 +17,14 @@ fun openFile(
     val dir = File(
         context.getExternalFilesDir(
             Environment.DIRECTORY_DOCUMENTS
-        ), "PVPMK"
+        ), "PVP"
     )
     dir.mkdir()
 
     val file = File(
         context.getExternalFilesDir(
             Environment.DIRECTORY_DOCUMENTS
-        ), "PVPMK/${fileName}.pvp"
+        ), "PVP/${fileName}.pvp"
     )
 
     val fileStream = FileInputStream(file)
@@ -46,14 +46,14 @@ fun saveFile(
     val dir = File(
         context.getExternalFilesDir(
             Environment.DIRECTORY_DOCUMENTS
-        ), "PVPMK"
+        ), "PVP"
     )
     dir.mkdir()
 
     val file = File(
         context.getExternalFilesDir(
             Environment.DIRECTORY_DOCUMENTS
-        ), "PVPMK/${fileName}.pvp"
+        ), "PVP/${fileName}.pvp"
     )
 
     val fileStream = FileOutputStream(file)

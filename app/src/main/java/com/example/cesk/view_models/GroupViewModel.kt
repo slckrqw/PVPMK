@@ -47,7 +47,7 @@ class GroupViewModel: ViewModel() {
 
     fun editGroup(
         name: String,
-        image: String = "null"
+        image: String
     ){
         getCurrentGroup()?.name = name
         getCurrentGroup()?.image = image

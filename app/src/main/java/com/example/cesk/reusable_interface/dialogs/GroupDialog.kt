@@ -49,7 +49,6 @@ import com.example.cesk.view_models.GroupViewModel
 fun GroupDialog(
     onClick: () -> Unit = {},
     groupViewModel: GroupViewModel = viewModel(),
-    planEditorViewModel: PlanEditorViewModel = viewModel(),
     dialogType: DialogType = DialogType.ADD
 ){
     val context = LocalContext.current
@@ -61,13 +60,15 @@ fun GroupDialog(
         contract =
         ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
-        imageUri = uri
-        /*val contentResolver = context.contentResolver
-        imageUri?.let {
+        if(uri != null) {
+            imageUri = uri
+            /*val contentResolver = context.contentResolver
+            imageUri?.let {
             contentResolver.takePersistableUriPermission(it, Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
             contentResolver.takePersistableUriPermission(it, Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        }*/
-        Toast.makeText(context, "Изображение успешно добавлено", Toast.LENGTH_LONG).show()
+            }*/
+            Toast.makeText(context, "Изображение успешно добавлено", Toast.LENGTH_LONG).show()
+        }
     }
 
     var groupName by remember{
@@ -147,12 +148,22 @@ fun GroupDialog(
                             onClick()
                         }
                         else{
-                            if(imageUri!=null){
-                                groupViewModel.editGroup(groupName, imageUri.toString())
-                            }
-                            else groupViewModel.editGroup(groupName)
-                            planEditorViewModel.setGroupDialogType(DialogType.ADD)
-                            planEditorViewModel.setAddGroup(false)
+                           if(imageUri != null){
+                               groupViewModel
+                                   .editGroup(
+                                       groupName,
+                                       imageUri.toString()
+                                   )
+                           }
+                           else{
+                               groupViewModel.getCurrentGroup()?.image?.let {
+                                   groupViewModel
+                                       .editGroup(
+                                           groupName,
+                                           it
+                                       )
+                               }
+                           }
 
                             onClick()
                         }

@@ -17,7 +17,7 @@ fun saveAsCNC(
     if(groupList.isEmpty()){
         Toast.makeText(
             context,
-            "Список групп пуст!",
+            "List of group is empty!",
             Toast.LENGTH_LONG
         ).show()
     } else {
@@ -66,14 +66,14 @@ fun saveAsCNC(
         val dir = File(
             context.getExternalFilesDir(
                 Environment.DIRECTORY_DOCUMENTS
-            ), "PVPMK"
+            ), "CNC"
         )
         dir.mkdir()
 
         val file = File(
             context.getExternalFilesDir(
                 Environment.DIRECTORY_DOCUMENTS
-            ), "PVPMK/${System.currentTimeMillis()}.cnc"
+            ), "CNC/${System.currentTimeMillis()}.txt"
         )
 
         val fileStream = FileOutputStream(file)

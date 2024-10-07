@@ -5,5 +5,10 @@ import java.io.Serializable
 enum class ConstructType(val value: String?):Serializable {
     NOTHING(null),
     WALL("Стена"),
-    PLATE("Плита")
+    PLATE("Плита"),
+    COLUMN("Колонна"),
+    PYLON("Пилон"),
+    MONOLITHIC("Монолитный блок"),
+    FOUNDATION("Фундамент"),
+    BEAM("Балка")
 }

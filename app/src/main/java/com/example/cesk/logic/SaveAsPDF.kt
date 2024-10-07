@@ -77,6 +77,11 @@ fun savePdf(
                 ConstructType.NOTHING -> "Н "
                 ConstructType.WALL -> "Ст "
                 ConstructType.PLATE -> "Пл "
+                ConstructType.BEAM -> "Б "
+                ConstructType.COLUMN -> "К "
+                ConstructType.FOUNDATION -> "Ф "
+                ConstructType.MONOLITHIC -> "Мб "
+                ConstructType.PYLON -> "П "
             }
                     + it.averageEndurance.toString(),
             it.point.x!!+15,
@@ -89,14 +94,14 @@ fun savePdf(
     val dir = File(
         context.getExternalFilesDir(
             Environment.DIRECTORY_DOCUMENTS
-        ), "PVPMK"
+        ), "PDF"
     )
     dir.mkdir()
 
     val file = File(
         context.getExternalFilesDir(
             Environment.DIRECTORY_DOCUMENTS
-        ), "PVPMK/${currentGroup.name}.pdf"
+        ), "PDF/${currentGroup.name}.pdf"
     )
     pdfDocument.writeTo(file.outputStream())
     pdfDocument.close()

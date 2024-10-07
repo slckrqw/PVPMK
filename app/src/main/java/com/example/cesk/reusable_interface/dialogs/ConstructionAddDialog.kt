@@ -180,6 +180,22 @@ fun ConstructionAddDialog(
                                         .setTypeMenuSwitch(false)
                                 }
                             )
+                            ConstructionTypeDropDownItem(
+                                type = ConstructType.COLUMN,
+                                typeTemp = {typeTemp = it},
+                                onClick = {
+                                    constructionDialogViewModel
+                                        .setTypeMenuSwitch(false)
+                                }
+                            )
+                            ConstructionTypeDropDownItem(
+                                type = ConstructType.PYLON,
+                                typeTemp = {typeTemp = it},
+                                onClick = {
+                                    constructionDialogViewModel
+                                        .setTypeMenuSwitch(false)
+                                }
+                            )
                         }
                     }
                     TextField(

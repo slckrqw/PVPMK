@@ -183,7 +183,8 @@ fun PlanEditor(
     ) {
         if(groupVM.getIndex() != 0) {
             MakePoint(
-                modifier = canvasModifier
+                modifier = canvasModifier,
+                groupViewModel = groupVM
             )
         }
         Row(
@@ -578,11 +579,13 @@ fun PlanEditor(
         when(planEditorVM.getGroupDialogType()){
             DialogType.ADD -> GroupDialog(
                 onClick = {planEditorVM.setAddGroup(false)},
-                dialogType = DialogType.ADD
+                dialogType = DialogType.ADD,
+                groupViewModel = groupVM
             )
             DialogType.EDIT -> GroupDialog(
                 onClick = { planEditorVM.setAddGroup(false) },
-                dialogType = DialogType.EDIT
+                dialogType = DialogType.EDIT,
+                groupViewModel = groupVM
             )
         }
     }
@@ -592,7 +595,8 @@ fun PlanEditor(
                planEditorVM
                    .setFileAccessDialog(false)
            },
-           accessType = planEditorVM.getFileAccess()
+           accessType = planEditorVM.getFileAccess(),
+           groupVM = groupVM
        )
     }
 }

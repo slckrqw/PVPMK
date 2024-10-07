@@ -13,6 +13,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -20,6 +21,7 @@ import com.example.cesk.navigation.Screen
 import com.example.cesk.plan_editor.PlanEditor
 import com.example.cesk.start_screen.StartScreen
 import com.example.cesk.ui.theme.CESKTheme
+import com.example.cesk.view_models.GroupViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,6 +73,7 @@ class MainActivity : ComponentActivity() {
 fun PVPMK(){
 
     val navController = rememberNavController()
+    val groupVM: GroupViewModel = viewModel()
 
     NavHost(
         navController = navController,
@@ -81,10 +84,15 @@ fun PVPMK(){
         popExitTransition  = { fadeOut() }
     ) {
         composable(Screen.StartScreen.route){
-            StartScreen(navController = navController)
+            StartScreen(
+                navController = navController,
+                groupVM = groupVM
+            )
         }
         composable(Screen.PlanEditor.route){
-            PlanEditor()
+           PlanEditor(
+               groupVM = groupVM
+           )
         }
     }
 }
