@@ -76,11 +76,11 @@ fun MakePoint(
                         drawRect(
                             color = Color.White,
                             topLeft = Offset(it.point.x!!, it.point.y!!),
-                            size = Size(200f, 200f)
+                            size = Size(200f, 100f)
                         )
                         drawText(
                             textLayout,
-                            topLeft = Offset(it.point.x!! + 15, it.point.y!! + 45)
+                            topLeft = Offset(it.point.x!! + 15, it.point.y!! + 35)
                         )
                     }
                     drawCircle(

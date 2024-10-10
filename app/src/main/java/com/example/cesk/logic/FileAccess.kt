@@ -13,7 +13,7 @@ import java.io.ObjectOutputStream
 fun openFile(
     fileName: String,
     context: Context
-):MutableList<Group>{
+):MutableList<Group>?{
 
     val dir = File(
         context.getExternalFilesDir(
@@ -22,21 +22,31 @@ fun openFile(
     )
     dir.mkdir()
 
-    val file = File(
-        context.getExternalFilesDir(
-            Environment.DIRECTORY_DOCUMENTS
-        ), "PVP/${fileName}.pvp"
-    )
+    try {
+        val file = File(
+            context.getExternalFilesDir(
+                Environment.DIRECTORY_DOCUMENTS
+            ), "PVP/${fileName}.pvp"
+        )
 
-    val fileStream = FileInputStream(file)
-    val inStream = ObjectInputStream(fileStream)
+        val fileStream = FileInputStream(file)
+        val inStream = ObjectInputStream(fileStream)
 
-    val item = inStream.readObject() as MutableList<Group>
+        val item = inStream.readObject() as MutableList<Group>
 
-    inStream.close()
-    fileStream.close()
+        inStream.close()
+        fileStream.close()
 
-    return item
+        return item
+    }
+    catch (e: Exception){
+        Toast.makeText(
+            context,
+            "Не существует файла с таким имененем!",
+            Toast.LENGTH_LONG
+        ).show()
+        return null
+    }
 }
 
 fun saveFile(
@@ -64,9 +74,5 @@ fun saveFile(
     outStream.close()
     fileStream.close()
 
-    Toast.makeText(
-        context,
-        "Файл сохранён как ${file.absolutePath}",
-        Toast.LENGTH_LONG
-    ).show()
+
 }

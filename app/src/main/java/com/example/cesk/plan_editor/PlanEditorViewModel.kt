@@ -8,7 +8,7 @@ import com.example.cesk.model.enums.FileAccessType
 
 class PlanEditorViewModel: ViewModel() {
 
-    private var expandTools = mutableStateOf(false)
+    private var expandTools = mutableStateOf(true)
     private var addGroup = mutableStateOf(false)
     private var addConstruction = mutableStateOf(false)
     private var groupSettings = mutableStateOf(false)

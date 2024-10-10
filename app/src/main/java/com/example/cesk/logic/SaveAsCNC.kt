@@ -9,6 +9,7 @@ import java.io.FileOutputStream
 import java.io.ObjectOutputStream
 
 fun saveAsCNC(
+    fileName: String,
     groupList: List<Group>,
     context: Context
 ){
@@ -73,7 +74,7 @@ fun saveAsCNC(
         val file = File(
             context.getExternalFilesDir(
                 Environment.DIRECTORY_DOCUMENTS
-            ), "CNC/${System.currentTimeMillis()}.txt"
+            ), "CNC/$fileName.cnc"
         )
 
         val fileStream = FileOutputStream(file)

@@ -2,7 +2,6 @@ package com.example.cesk.plan_editor
 
 import android.Manifest
 import android.graphics.Picture
-import android.os.Environment
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -61,7 +60,6 @@ import androidx.compose.ui.unit.toSize
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cesk.R
 import com.example.cesk.logic.MakePoint
-import com.example.cesk.logic.saveAsCNC
 import com.example.cesk.logic.savePdf
 import com.example.cesk.model.Construction
 import com.example.cesk.model.Group
@@ -78,11 +76,6 @@ import com.example.cesk.ui.theme.Purple10
 import com.example.cesk.view_models.GroupViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
-import java.io.ObjectInputStream
-import java.io.ObjectOutputStream
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -248,10 +241,8 @@ fun PlanEditor(
                         UniversalButton(
                             onClick = {
                                 if(filePermission.allPermissionsGranted) {
-                                    saveAsCNC(
-                                        groupList = groupVM.getGroupList(),
-                                        context = context
-                                    )
+                                    planEditorVM.setFileAccess(FileAccessType.CNC)
+                                    planEditorVM.setFileAccessDialog(true)
                                 }
                                 else{
                                     Toast.makeText(
@@ -374,10 +365,8 @@ fun PlanEditor(
                         ExpandedUniversalButton(
                             onClick = {
                                 if(filePermission.allPermissionsGranted) {
-                                    saveAsCNC(
-                                        groupList = groupVM.getGroupList(),
-                                        context = context
-                                    )
+                                    planEditorVM.setFileAccess(FileAccessType.CNC)
+                                    planEditorVM.setFileAccessDialog(true)
                                 }
                                 else{
                                     Toast.makeText(
@@ -448,7 +437,10 @@ fun PlanEditor(
                             contentPadding = PaddingValues(0.dp),
                             shape = RectangleShape,
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.White
+                                containerColor = when(planEditorVM.getPointsVisibility()){
+                                    true -> Color.White
+                                    false -> Purple10
+                                },
                             )
                         ){
                             Row(
@@ -462,7 +454,10 @@ fun PlanEditor(
                                         false -> painterResource(id = R.drawable.hide)
                                     },
                                     contentDescription = null,
-                                    tint = Color.Black,
+                                    tint = when(planEditorVM.getPointsVisibility()){
+                                                true -> Color.Black
+                                                false -> Color.White
+                                    },
                                     modifier = Modifier
                                         .padding(horizontal = 5.dp)
                                         .size(25.dp)
@@ -470,7 +465,10 @@ fun PlanEditor(
                                 Text(
                                     text = "Условные обозначения",
                                     modifier = Modifier.padding(5.dp),
-                                    color = Color.Black,
+                                    color = when(planEditorVM.getPointsVisibility()){
+                                        true -> Color.Black
+                                        false -> Color.White
+                                    },
                                     fontSize = 17.sp
                                 )
                             }

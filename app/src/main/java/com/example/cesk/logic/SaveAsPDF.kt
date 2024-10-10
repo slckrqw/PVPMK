@@ -62,8 +62,8 @@ fun savePdf(
         canvas.drawRect(
             it.point.x!!,
             it.point.y!!,
-            it.point.x!! + 200f,
-            it.point.y!! + 200f,
+            it.point.x!! + 150f,
+            it.point.y!! + 80f,
             rectPaint
         )
         canvas.drawCircle(
