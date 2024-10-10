@@ -14,6 +14,7 @@ class PlanEditorViewModel: ViewModel() {
     private var groupSettings = mutableStateOf(false)
     private var groupsMenu = mutableStateOf(false)
     private var fileAccessDialog = mutableStateOf(false)
+    private var pointsVisibility = mutableStateOf(true)
 
     private var constructionDialogType = mutableStateOf(DialogType.ADD)
     private var groupDialogType = mutableStateOf(DialogType.ADD)
@@ -43,6 +44,11 @@ class PlanEditorViewModel: ViewModel() {
     fun setFileAccessDialog(value: Boolean){
         fileAccessDialog.value = value
     }
+
+    fun setPointsVisibility(value: Boolean){
+        pointsVisibility.value = value
+    }
+
     fun setFileAccess(value: FileAccessType){
         fileAccess.value = value
     }
@@ -78,9 +84,14 @@ class PlanEditorViewModel: ViewModel() {
     fun getFileAccessDialog(): Boolean{
         return fileAccessDialog.value
     }
-   fun getFileAccess(): FileAccessType{
-       return fileAccess.value
-   }
+
+    fun getPointsVisibility(): Boolean{
+        return pointsVisibility.value
+    }
+
+    fun getFileAccess(): FileAccessType{
+        return fileAccess.value
+    }
 
     fun getConstructionDialogType(): DialogType{
         return constructionDialogType.value

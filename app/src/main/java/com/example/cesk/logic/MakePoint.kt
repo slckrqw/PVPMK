@@ -72,19 +72,21 @@ fun MakePoint(
                         } + it.averageEndurance.toString(),
                         style = TextStyle(fontSize = 28.sp)
                     )
-                    drawRect(
-                        color = Color.White,
-                        topLeft = Offset(it.point.x!!, it.point.y!!),
-                        size = Size(200f, 200f)
-                    )
+                    if(planEditorViewModel.getPointsVisibility()) {
+                        drawRect(
+                            color = Color.White,
+                            topLeft = Offset(it.point.x!!, it.point.y!!),
+                            size = Size(200f, 200f)
+                        )
+                        drawText(
+                            textLayout,
+                            topLeft = Offset(it.point.x!! + 15, it.point.y!! + 45)
+                        )
+                    }
                     drawCircle(
                         radius = 20f,
                         color = Orange10,
                         center = Offset(it.point.x!! + 10, it.point.y!! + 10)
-                    )
-                    drawText(
-                        textLayout,
-                        topLeft = Offset(it.point.x!! + 15, it.point.y!! + 45)
                     )
                 }
             }

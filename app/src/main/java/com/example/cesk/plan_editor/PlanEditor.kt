@@ -11,6 +11,7 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,6 +23,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
@@ -37,6 +40,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -300,6 +304,32 @@ fun PlanEditor(
                             },
                             iconRes = R.drawable.open_file
                         )
+                        Button(
+                            onClick = {
+                                planEditorVM
+                                    .setPointsVisibility(
+                                        !planEditorVM
+                                            .getPointsVisibility()
+                                    )
+                            },
+                            modifier = Modifier
+                                .clip(RectangleShape)
+                                .size(50.dp),
+                            shape = RectangleShape,
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.White),
+                            contentPadding = PaddingValues(0.dp)
+                        ){
+                            Icon(
+                                painter = when(planEditorVM.getPointsVisibility()){
+                                    true -> painterResource(id = R.drawable.view)
+                                    false -> painterResource(id = R.drawable.hide)
+                                },
+                                contentDescription = null,
+                                tint = Color.Black,
+                                modifier = Modifier
+                                    .size(25.dp)
+                            )
+                        }
                     }
                 }
 
@@ -403,6 +433,48 @@ fun PlanEditor(
                             iconRes = R.drawable.open_file,
                             text = "Открыть файл"
                         )
+                        Button(
+                            onClick = {
+                                planEditorVM
+                                    .setPointsVisibility(
+                                        !planEditorVM
+                                            .getPointsVisibility()
+                                    )
+                            },
+                            modifier = Modifier
+                                .height(50.dp)
+                                .width(200.dp)
+                                .clip(RectangleShape),
+                            contentPadding = PaddingValues(0.dp),
+                            shape = RectangleShape,
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.White
+                            )
+                        ){
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Start,
+                                modifier = Modifier.fillMaxWidth()
+                            ){
+                                Icon(
+                                    painter = when(planEditorVM.getPointsVisibility()){
+                                        true -> painterResource(id = R.drawable.view)
+                                        false -> painterResource(id = R.drawable.hide)
+                                    },
+                                    contentDescription = null,
+                                    tint = Color.Black,
+                                    modifier = Modifier
+                                        .padding(horizontal = 5.dp)
+                                        .size(25.dp)
+                                )
+                                Text(
+                                    text = "Условные обозначения",
+                                    modifier = Modifier.padding(5.dp),
+                                    color = Color.Black,
+                                    fontSize = 17.sp
+                                )
+                            }
+                        }
                     }
                 }
             }

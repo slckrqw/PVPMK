@@ -14,6 +14,7 @@ fun openFile(
     fileName: String,
     context: Context
 ):MutableList<Group>{
+
     val dir = File(
         context.getExternalFilesDir(
             Environment.DIRECTORY_DOCUMENTS
