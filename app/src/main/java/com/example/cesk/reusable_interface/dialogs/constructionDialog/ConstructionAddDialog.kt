@@ -1,4 +1,4 @@
-package com.example.cesk.reusable_interface.dialogs
+package com.example.cesk.reusable_interface.dialogs.constructionDialog
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -21,12 +21,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,10 +43,10 @@ import com.example.cesk.model.Construction
 import com.example.cesk.model.Group
 import com.example.cesk.model.enums.DialogType
 import com.example.cesk.reusable_interface.UniversalButton
+import com.example.cesk.reusable_interface.dialogs.EnduranceDialog
 import com.example.cesk.ui.theme.Blue10
 import com.example.cesk.ui.theme.CESKTheme
 import com.example.cesk.ui.theme.Red10
-import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -57,6 +57,8 @@ fun ConstructionAddDialog(
     dialogType: DialogType,
     constructionDialogViewModel: ConstructionDialogViewModel = viewModel()
 ){
+    val dialogState by constructionDialogViewModel.constructionDialogState.collectAsState()
+
     var typeTemp by remember{
         mutableStateOf(ConstructType.NOTHING)
     }
@@ -122,7 +124,7 @@ fun ConstructionAddDialog(
                         UniversalButton(
                             onClick = {
                                 constructionDialogViewModel
-                                    .setEnduranceAddDialog(true)
+                                    .onEnduranceAdd()
                             },
                             iconRes = R.drawable.plus_icon
                         )
@@ -138,7 +140,7 @@ fun ConstructionAddDialog(
                     Button(
                         onClick = {
                             constructionDialogViewModel
-                                .setTypeMenuSwitch(true)
+                                .onTypeSwitch()
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                         border = BorderStroke(1.dp, Color.Black),
@@ -157,11 +159,10 @@ fun ConstructionAddDialog(
                             )
                         }
                         DropdownMenu(
-                            expanded = constructionDialogViewModel
-                                .getTypeMenuSwitch(),
+                            expanded = dialogState.typeMenuSwitch,
                             onDismissRequest = {
                                 constructionDialogViewModel
-                                    .setTypeMenuSwitch(false)
+                                    .onTypeSwitch()
                             }
                         ) {
                             ConstructionTypeDropDownItem(
@@ -169,7 +170,7 @@ fun ConstructionAddDialog(
                                 typeTemp = {typeTemp = it},
                                 onClick = {
                                     constructionDialogViewModel
-                                        .setTypeMenuSwitch(false)
+                                        .onTypeSwitch()
                                 }
                             )
                             ConstructionTypeDropDownItem(
@@ -177,7 +178,7 @@ fun ConstructionAddDialog(
                                 typeTemp = {typeTemp = it},
                                 onClick = {
                                     constructionDialogViewModel
-                                        .setTypeMenuSwitch(false)
+                                        .onTypeSwitch()
                                 }
                             )
                             ConstructionTypeDropDownItem(
@@ -185,7 +186,7 @@ fun ConstructionAddDialog(
                                 typeTemp = {typeTemp = it},
                                 onClick = {
                                     constructionDialogViewModel
-                                        .setTypeMenuSwitch(false)
+                                        .onTypeSwitch()
                                 }
                             )
                             ConstructionTypeDropDownItem(
@@ -193,7 +194,7 @@ fun ConstructionAddDialog(
                                 typeTemp = {typeTemp = it},
                                 onClick = {
                                     constructionDialogViewModel
-                                        .setTypeMenuSwitch(false)
+                                        .onTypeSwitch()
                                 }
                             )
                         }
@@ -238,7 +239,7 @@ fun ConstructionAddDialog(
                         Button(
                             onClick = {
                                 constructionDialogViewModel
-                                    .setConstructionDeleteDialog(true)
+                                    .onConstructionDelete()
                             },
                             colors = ButtonDefaults.buttonColors(containerColor = Red10),
                             modifier = Modifier
@@ -256,23 +257,23 @@ fun ConstructionAddDialog(
             }
         }
     }
-    if(constructionDialogViewModel.getEnduranceAddDialog()){
+    if(constructionDialogViewModel.enduranceAdd){
         EnduranceDialog(
             onClick = {
                 constructionDialogViewModel
-                    .setEnduranceAddDialog(false)
+                    .onEnduranceAdd()
             },
             testsList = testsList,
             construction = construction
         )
     }
-    if(constructionDialogViewModel.getConstructionDeleteDialog()){
+    if(constructionDialogViewModel.deleteDialog){
         ConstructionDeleteDialog(
             group = group,
             construction = construction,
             onClick = {
                 constructionDialogViewModel
-                    .setConstructionDeleteDialog(false)
+                    .onConstructionDelete()
             }
         )
     }

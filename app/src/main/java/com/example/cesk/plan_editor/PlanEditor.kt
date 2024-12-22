@@ -67,7 +67,7 @@ import com.example.cesk.model.enums.DialogType
 import com.example.cesk.model.enums.FileAccessType
 import com.example.cesk.reusable_interface.ExpandedUniversalButton
 import com.example.cesk.reusable_interface.UniversalButton
-import com.example.cesk.reusable_interface.dialogs.ConstructionAddDialog
+import com.example.cesk.reusable_interface.dialogs.constructionDialog.ConstructionAddDialog
 import com.example.cesk.reusable_interface.dialogs.FileAccessDialog
 import com.example.cesk.reusable_interface.dialogs.GroupDialog
 import com.example.cesk.ui.theme.CESKTheme
