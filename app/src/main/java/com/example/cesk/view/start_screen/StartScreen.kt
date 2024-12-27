@@ -1,4 +1,4 @@
-package com.example.cesk.start_screen
+package com.example.cesk.view.start_screen
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -33,7 +33,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.cesk.R
 import com.example.cesk.navigation.Screen
-import com.example.cesk.reusable_interface.RecentFilesBox
+import com.example.cesk.view.reusable_interface.RecentFilesBox
 import com.example.cesk.ui.theme.CESKTheme
 import com.example.cesk.ui.theme.Purple10
 import com.example.cesk.view_models.GroupViewModel

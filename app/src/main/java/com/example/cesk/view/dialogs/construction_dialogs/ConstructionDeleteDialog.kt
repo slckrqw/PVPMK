@@ -1,4 +1,4 @@
-package com.example.cesk.reusable_interface.dialogs.constructionDialog
+package com.example.cesk.view.dialogs.construction_dialogs
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

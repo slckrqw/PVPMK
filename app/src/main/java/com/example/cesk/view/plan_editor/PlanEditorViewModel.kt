@@ -1,4 +1,4 @@
-package com.example.cesk.plan_editor
+package com.example.cesk.view.plan_editor
 
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf

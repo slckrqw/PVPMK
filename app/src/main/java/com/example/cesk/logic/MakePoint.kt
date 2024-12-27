@@ -19,7 +19,7 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cesk.model.enums.ConstructionType
-import com.example.cesk.plan_editor.PlanEditorViewModel
+import com.example.cesk.view.plan_editor.PlanEditorViewModel
 import com.example.cesk.ui.theme.Orange10
 import com.example.cesk.view_models.GroupViewModel
 import java.io.IOException

@@ -1,4 +1,4 @@
-package com.example.cesk.reusable_interface.dialogs.constructionDialog
+package com.example.cesk.view.dialogs.construction_dialogs
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -23,10 +23,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableDoubleStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,10 +37,11 @@ import com.example.cesk.model.enums.ConstructionType
 import com.example.cesk.model.Construction
 import com.example.cesk.model.Group
 import com.example.cesk.model.enums.DialogType
-import com.example.cesk.reusable_interface.UniversalButton
+import com.example.cesk.view.reusable_interface.UniversalButton
 import com.example.cesk.ui.theme.Blue10
 import com.example.cesk.ui.theme.CESKTheme
 import com.example.cesk.ui.theme.Red10
+import com.example.cesk.view.dialogs.EnduranceDialog
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

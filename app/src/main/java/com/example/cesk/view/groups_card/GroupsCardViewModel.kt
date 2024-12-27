@@ -1,4 +1,4 @@
-package com.example.cesk.groupsCard
+package com.example.cesk.view.groups_card
 
 import androidx.lifecycle.ViewModel
 import com.example.cesk.model.state.GroupsCardState

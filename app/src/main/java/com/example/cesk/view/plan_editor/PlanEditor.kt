@@ -1,4 +1,4 @@
-package com.example.cesk.plan_editor
+package com.example.cesk.view.plan_editor
 
 import android.Manifest
 import android.graphics.Picture
@@ -57,11 +57,11 @@ import com.example.cesk.model.Construction
 import com.example.cesk.model.Group
 import com.example.cesk.model.enums.DialogType
 import com.example.cesk.model.enums.FileAccessType
-import com.example.cesk.reusable_interface.ExpandedUniversalButton
-import com.example.cesk.reusable_interface.UniversalButton
-import com.example.cesk.reusable_interface.dialogs.FileAccessDialog
-import com.example.cesk.reusable_interface.dialogs.GroupDialog
-import com.example.cesk.reusable_interface.dialogs.constructionDialog.ConstructionAddDialog
+import com.example.cesk.view.reusable_interface.ExpandedUniversalButton
+import com.example.cesk.view.reusable_interface.UniversalButton
+import com.example.cesk.view.dialogs.FileAccessDialog
+import com.example.cesk.view.dialogs.GroupDialog
+import com.example.cesk.view.dialogs.construction_dialogs.ConstructionAddDialog
 import com.example.cesk.ui.theme.CESKTheme
 import com.example.cesk.ui.theme.Purple10
 import com.example.cesk.view_models.GroupViewModel

@@ -1,4 +1,4 @@
-package com.example.cesk.reusable_interface
+package com.example.cesk.view.reusable_interface
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues

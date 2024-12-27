@@ -18,8 +18,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.cesk.navigation.Screen
-import com.example.cesk.plan_editor.PlanEditor
-import com.example.cesk.start_screen.StartScreen
+import com.example.cesk.view.plan_editor.PlanEditor
+import com.example.cesk.view.start_screen.StartScreen
 import com.example.cesk.ui.theme.CESKTheme
 import com.example.cesk.view_models.GroupViewModel
 

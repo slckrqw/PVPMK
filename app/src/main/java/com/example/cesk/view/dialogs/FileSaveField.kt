@@ -1,4 +1,4 @@
-package com.example.cesk.reusable_interface.dialogs
+package com.example.cesk.view.dialogs
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column

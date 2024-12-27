@@ -1,4 +1,4 @@
-package com.example.cesk.groupsCard
+package com.example.cesk.view.groups_card
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -38,8 +38,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cesk.R
 import com.example.cesk.model.Group
 import com.example.cesk.model.enums.DialogType
-import com.example.cesk.reusable_interface.ExpandedUniversalButton
-import com.example.cesk.reusable_interface.UniversalButton
+import com.example.cesk.view.reusable_interface.ExpandedUniversalButton
+import com.example.cesk.view.reusable_interface.UniversalButton
 import com.example.cesk.ui.theme.Green10
 import com.example.cesk.ui.theme.Purple10
 

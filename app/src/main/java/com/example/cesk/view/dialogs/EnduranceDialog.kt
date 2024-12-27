@@ -1,4 +1,4 @@
-package com.example.cesk.reusable_interface.dialogs.constructionDialog
+package com.example.cesk.view.dialogs
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions

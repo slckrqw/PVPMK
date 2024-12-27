@@ -1,4 +1,4 @@
-package com.example.cesk.reusable_interface.dialogs
+package com.example.cesk.view.dialogs
 
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cesk.model.enums.FileAccessType
-import com.example.cesk.reusable_interface.RecentFilesBox
+import com.example.cesk.view.reusable_interface.RecentFilesBox
 import com.example.cesk.ui.theme.CESKTheme
 import com.example.cesk.view_models.GroupViewModel
 
