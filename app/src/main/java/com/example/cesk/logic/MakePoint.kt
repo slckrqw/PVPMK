@@ -18,7 +18,7 @@ import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.cesk.model.enums.ConstructType
+import com.example.cesk.model.enums.ConstructionType
 import com.example.cesk.plan_editor.PlanEditorViewModel
 import com.example.cesk.ui.theme.Orange10
 import com.example.cesk.view_models.GroupViewModel
@@ -61,14 +61,14 @@ fun MakePoint(
                     val textLayout = textMeasurer.measure(
                         text =
                         when(it.type) {
-                            ConstructType.NOTHING -> "Н "
-                            ConstructType.WALL -> "Ст "
-                            ConstructType.PLATE -> "Пл "
-                            ConstructType.BEAM -> "Б "
-                            ConstructType.COLUMN -> "К "
-                            ConstructType.FOUNDATION -> "Ф "
-                            ConstructType.MONOLITHIC -> "Мб "
-                            ConstructType.PYLON -> "П "
+                            ConstructionType.NOTHING -> "Н "
+                            ConstructionType.WALL -> "Ст "
+                            ConstructionType.PLATE -> "Пл "
+                            ConstructionType.BEAM -> "Б "
+                            ConstructionType.COLUMN -> "К "
+                            ConstructionType.FOUNDATION -> "Ф "
+                            ConstructionType.MONOLITHIC -> "Мб "
+                            ConstructionType.PYLON -> "П "
                         } + it.averageEndurance.toString(),
                         style = TextStyle(fontSize = 28.sp)
                     )

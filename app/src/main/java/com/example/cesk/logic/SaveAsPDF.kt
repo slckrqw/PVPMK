@@ -12,7 +12,7 @@ import android.os.Environment
 import android.widget.Toast
 import androidx.compose.ui.graphics.asComposePaint
 import com.example.cesk.model.Group
-import com.example.cesk.model.enums.ConstructType
+import com.example.cesk.model.enums.ConstructionType
 import java.io.File
 
 fun savePdf(
@@ -74,14 +74,14 @@ fun savePdf(
         )
         canvas.drawText(
             when(it.type) {
-                ConstructType.NOTHING -> "Н "
-                ConstructType.WALL -> "Ст "
-                ConstructType.PLATE -> "Пл "
-                ConstructType.BEAM -> "Б "
-                ConstructType.COLUMN -> "К "
-                ConstructType.FOUNDATION -> "Ф "
-                ConstructType.MONOLITHIC -> "Мб "
-                ConstructType.PYLON -> "П "
+                ConstructionType.NOTHING -> "Н "
+                ConstructionType.WALL -> "Ст "
+                ConstructionType.PLATE -> "Пл "
+                ConstructionType.BEAM -> "Б "
+                ConstructionType.COLUMN -> "К "
+                ConstructionType.FOUNDATION -> "Ф "
+                ConstructionType.MONOLITHIC -> "Мб "
+                ConstructionType.PYLON -> "П "
             }
                     + it.averageEndurance.toString(),
             it.point.x!!+15,

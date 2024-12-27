@@ -24,7 +24,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
@@ -38,7 +37,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cesk.R
-import com.example.cesk.model.enums.ConstructType
+import com.example.cesk.model.enums.ConstructionType
 import com.example.cesk.model.Construction
 import com.example.cesk.model.Group
 import com.example.cesk.model.enums.DialogType
@@ -54,28 +53,9 @@ fun ConstructionAddDialog(
     group: Group,
     construction: Construction,
     dialogType: DialogType,
-    constructionDialogViewModel: ConstructionDialogViewModel = viewModel()
+    vm: ConstructionDialogViewModel = viewModel()
 ){
-    val dialogState by constructionDialogViewModel.constructionDialogState.collectAsState()
-
-    var typeTemp by remember{
-        mutableStateOf(ConstructType.NOTHING)
-    }
-    var noteTemp by remember{
-        mutableStateOf(construction.note)
-    }
-
-    var averageEndurance by remember{
-        mutableDoubleStateOf(0.0)
-    }
-    val testsList = remember{
-        construction.tests.toMutableStateList()
-    }
-
-    averageEndurance = if(testsList.isNotEmpty()){
-        (testsList.sum()/testsList.size)
-    }
-    else 0.0
+    val dialogState by vm.constructionDialogState.collectAsState()
 
     Dialog(
         onDismissRequest = {
@@ -96,9 +76,9 @@ fun ConstructionAddDialog(
                         .width(120.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    items(testsList.size) {
+                    items(dialogState.testsList.size) {
                         Text(
-                            text = testsList[it].toString(),
+                            text = dialogState.testsList[it].toString(),
                             fontSize = 15.sp,
                             color = Color.Black,
                             modifier = Modifier
@@ -106,14 +86,14 @@ fun ConstructionAddDialog(
                                 .combinedClickable(
                                     onClick = {},
                                     onLongClick = {
-                                        testsList.removeAt(it)
+                                        dialogState.testsList.removeAt(it)
                                     }
                                 )
                         )
                     }
                     item {
                         Text(
-                            text = "Ср: " + "${Math.round(averageEndurance * 10.0) / 10.0}" + " МПа",
+                            text = "Ср: " + "${Math.round(vm.getAverageEndurance() * 10.0) / 10.0}" + " МПа",
                             fontSize = 17.sp,
                             color = Color.Black,
                             modifier = Modifier.padding(bottom = 10.dp)
@@ -122,7 +102,7 @@ fun ConstructionAddDialog(
                     item {
                         UniversalButton(
                             onClick = {
-                                constructionDialogViewModel
+                                vm
                                     .onEnduranceAdd()
                             },
                             iconRes = R.drawable.plus_icon
@@ -138,7 +118,7 @@ fun ConstructionAddDialog(
                 ) {
                     Button(
                         onClick = {
-                            constructionDialogViewModel
+                            vm
                                 .onTypeSwitch()
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
@@ -148,9 +128,7 @@ fun ConstructionAddDialog(
                             .fillMaxWidth(),
                         shape = RoundedCornerShape(10.dp)
                     ) {
-                        (if(typeTemp.value != null){
-                            typeTemp.value
-                        } else "Тип конструкции")?.let {
+                        dialogState.constructionType.value?.let {
                             Text(
                                 text = it,
                                 color = Color.Black,
@@ -160,47 +138,43 @@ fun ConstructionAddDialog(
                         DropdownMenu(
                             expanded = dialogState.typeMenuSwitch,
                             onDismissRequest = {
-                                constructionDialogViewModel
+                                vm
                                     .onTypeSwitch()
                             }
                         ) {
                             ConstructionTypeDropDownItem(
-                                type = ConstructType.WALL,
-                                typeTemp = {typeTemp = it},
+                                type = ConstructionType.WALL,
+                                typeTemp = {vm.onConstructionTypeChange(it)},
                                 onClick = {
-                                    constructionDialogViewModel
-                                        .onTypeSwitch()
+                                    vm.onTypeSwitch()
                                 }
                             )
                             ConstructionTypeDropDownItem(
-                                type = ConstructType.PLATE,
-                                typeTemp = {typeTemp = it},
+                                type = ConstructionType.PLATE,
+                                typeTemp = {vm.onConstructionTypeChange(it)},
                                 onClick = {
-                                    constructionDialogViewModel
-                                        .onTypeSwitch()
+                                    vm.onTypeSwitch()
                                 }
                             )
                             ConstructionTypeDropDownItem(
-                                type = ConstructType.COLUMN,
-                                typeTemp = {typeTemp = it},
+                                type = ConstructionType.COLUMN,
+                                typeTemp = {vm.onConstructionTypeChange(it)},
                                 onClick = {
-                                    constructionDialogViewModel
-                                        .onTypeSwitch()
+                                    vm.onTypeSwitch()
                                 }
                             )
                             ConstructionTypeDropDownItem(
-                                type = ConstructType.PYLON,
-                                typeTemp = {typeTemp = it},
+                                type = ConstructionType.PYLON,
+                                typeTemp = {vm.onConstructionTypeChange(it)},
                                 onClick = {
-                                    constructionDialogViewModel
-                                        .onTypeSwitch()
+                                    vm.onTypeSwitch()
                                 }
                             )
                         }
                     }
                     TextField(
-                        value = noteTemp,
-                        onValueChange = {noteTemp = it},
+                        value = dialogState.constructionNote,
+                        onValueChange = {vm.onConstructionNoteChange(it)},
                         placeholder = {
                             Text(
                                 text = "Примечание",
@@ -217,10 +191,10 @@ fun ConstructionAddDialog(
                     )
                     Button(
                         onClick = {
-                            construction.type = typeTemp
-                            construction.note = noteTemp
-                            construction.averageEndurance = Math.round(averageEndurance * 10.0) / 10.0 //round to tenths
-                            construction.tests = testsList.toMutableList()
+                            construction.type = dialogState.constructionType
+                            construction.note = dialogState.constructionNote
+                            construction.averageEndurance = Math.round(vm.getAverageEndurance() * 10.0) / 10.0 //round to tenths
+                            construction.tests = dialogState.testsList
                             onCLick()
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = Blue10),
@@ -237,8 +211,7 @@ fun ConstructionAddDialog(
                     if(dialogType == DialogType.EDIT){
                         Button(
                             onClick = {
-                                constructionDialogViewModel
-                                    .onConstructionDelete()
+                                vm.onConstructionDelete()
                             },
                             colors = ButtonDefaults.buttonColors(containerColor = Red10),
                             modifier = Modifier
@@ -259,10 +232,10 @@ fun ConstructionAddDialog(
     if(dialogState.enduranceAddDialog){
         EnduranceDialog(
             onClick = {
-                constructionDialogViewModel
+                vm
                     .onEnduranceAdd()
             },
-            testsList = testsList,
+            testsList = dialogState.testsList,
             construction = construction
         )
     }
@@ -271,8 +244,7 @@ fun ConstructionAddDialog(
             group = group,
             construction = construction,
             onClick = {
-                constructionDialogViewModel
-                    .onConstructionDelete()
+                vm.onConstructionDelete()
             }
         )
     }
@@ -280,8 +252,8 @@ fun ConstructionAddDialog(
 
 @Composable
 fun ConstructionTypeDropDownItem(
-    type: ConstructType,
-    typeTemp: (ConstructType) -> Unit,
+    type: ConstructionType,
+    typeTemp: (ConstructionType) -> Unit,
     onClick: () -> Unit
 ){
     DropdownMenuItem(
