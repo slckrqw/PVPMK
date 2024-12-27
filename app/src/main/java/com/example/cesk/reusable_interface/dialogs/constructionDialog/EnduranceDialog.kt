@@ -1,4 +1,4 @@
-package com.example.cesk.reusable_interface.dialogs
+package com.example.cesk.reusable_interface.dialogs.constructionDialog
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
@@ -27,7 +27,6 @@ import com.example.cesk.R
 import com.example.cesk.model.Construction
 import com.example.cesk.ui.theme.CESKTheme
 import kotlinx.coroutines.android.awaitFrame
-import kotlinx.coroutines.delay
 
 @Composable
 fun EnduranceDialog(

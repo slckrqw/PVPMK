@@ -43,7 +43,6 @@ import com.example.cesk.model.Construction
 import com.example.cesk.model.Group
 import com.example.cesk.model.enums.DialogType
 import com.example.cesk.reusable_interface.UniversalButton
-import com.example.cesk.reusable_interface.dialogs.EnduranceDialog
 import com.example.cesk.ui.theme.Blue10
 import com.example.cesk.ui.theme.CESKTheme
 import com.example.cesk.ui.theme.Red10
@@ -257,7 +256,7 @@ fun ConstructionAddDialog(
             }
         }
     }
-    if(constructionDialogViewModel.enduranceAdd){
+    if(dialogState.enduranceAddDialog){
         EnduranceDialog(
             onClick = {
                 constructionDialogViewModel
@@ -267,7 +266,7 @@ fun ConstructionAddDialog(
             construction = construction
         )
     }
-    if(constructionDialogViewModel.deleteDialog){
+    if(dialogState.constructionDeleteDialog){
         ConstructionDeleteDialog(
             group = group,
             construction = construction,
