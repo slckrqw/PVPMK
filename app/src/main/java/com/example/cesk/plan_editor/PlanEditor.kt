@@ -3,9 +3,7 @@ package com.example.cesk.plan_editor
 import android.Manifest
 import android.graphics.Picture
 import android.widget.Toast
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,17 +17,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -52,7 +45,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -67,11 +59,10 @@ import com.example.cesk.model.enums.DialogType
 import com.example.cesk.model.enums.FileAccessType
 import com.example.cesk.reusable_interface.ExpandedUniversalButton
 import com.example.cesk.reusable_interface.UniversalButton
-import com.example.cesk.reusable_interface.dialogs.constructionDialog.ConstructionAddDialog
 import com.example.cesk.reusable_interface.dialogs.FileAccessDialog
 import com.example.cesk.reusable_interface.dialogs.GroupDialog
+import com.example.cesk.reusable_interface.dialogs.constructionDialog.ConstructionAddDialog
 import com.example.cesk.ui.theme.CESKTheme
-import com.example.cesk.ui.theme.Green10
 import com.example.cesk.ui.theme.Purple10
 import com.example.cesk.view_models.GroupViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -84,7 +75,7 @@ fun PlanEditor(
     planEditorVM: PlanEditorViewModel = viewModel(),
 ) {
 
-    var currentGroup by remember{
+    val currentGroup by remember{
         mutableStateOf(Group())
     }
     var currentConstruction by remember{
@@ -476,164 +467,10 @@ fun PlanEditor(
                     }
                 }
             }
-            if(planEditorVM.getGroupsMenu()){
-                Card(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .width(300.dp),
-                    shape = RoundedCornerShape(topStart = 10.dp, bottomStart = 10.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White)
-                ){
-                    LazyColumn {
-                        item{
-                            Row(
-                                modifier = Modifier
-                                    .padding(bottom = 20.dp)
-                                    .fillMaxWidth()
-                                    .height(50.dp)
-                                    .background(Purple10),
-                                verticalAlignment = Alignment.CenterVertically
-                            ){
-                                UniversalButton(
-                                    onClick = {
-                                        planEditorVM
-                                            .setGroupsMenu(false)
-                                    },
-                                    iconRes = R.drawable.right_arrow_icon,
-                                    containerColor = Purple10
-                                )
-                            }
-                        }
-                        item{
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(bottom = 10.dp)
-                            ){
+            /*if(planEditorVM.getGroupsMenu()){
 
-                                ExpandedUniversalButton(
-                                    onClick = {
-                                        planEditorVM
-                                            .setAddGroup(true)
-                                    },
-                                    iconRes = R.drawable.plus_icon,
-                                    text = "Добавить"
-                                )
-                                Text(
-                                    text = "Группы:",
-                                    fontSize = 20.sp,
-                                    color = Color.Black,
-                                    modifier = Modifier.padding(start = 10.dp)
-                                )
-                            }
-                        }
-                        if(groupVM.getGroupList().isEmpty()){
-                            item{
-                                Column(
-                                    modifier = Modifier.fillMaxSize(),
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.Center
-                                ){
-                                    Text(
-                                        text = "Их пока нет :(",
-                                        fontSize = 20.sp,
-                                        color = Color.Gray
-                                    )
-                                }
-                            }
-                        }
-                        else {
-                            items(groupVM.getGroupList()) { group ->
-                                Card(
-                                    colors = CardDefaults.cardColors(containerColor = Color.White),
-                                    border = BorderStroke(
-                                        1.dp,
-                                        if (group.index == groupVM.getIndex()) {
-                                            Green10
-                                        } else Color.LightGray
-                                    ),
-                                    modifier = Modifier
-                                        .clickable(
-                                            onClick = {
-                                                groupVM.setIndex(group.index)
-                                                currentGroup = groupVM
-                                                    .getGroupList()
-                                                    .first {
-                                                        it.index == groupVM.getIndex()
-                                                    }
-                                            },
-                                        )
-                                        .height(60.dp)
-                                        .fillMaxWidth(),
-                                    shape = RectangleShape
-                                ) {
-                                    Row(
-                                        modifier = Modifier.fillMaxSize(),
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        IconButton(
-                                            onClick = {
-                                                groupVM.setIndex(group.index)
-                                                planEditorVM.setGroupSettings(true)
-                                            }
-                                        ) {
-                                            Icon(
-                                                painter = painterResource(R.drawable.dots),
-                                                contentDescription = null,
-                                                modifier = Modifier.size(30.dp),
-                                                tint = Color.Gray
-                                            )
-                                        }
-                                        Text(
-                                            text = group.name,
-                                            fontSize = 17.sp,
-                                            color = Color.Gray,
-                                            modifier = Modifier.padding(end = 10.dp),
-                                            maxLines = 1,
-                                            overflow = TextOverflow.Ellipsis
-                                        )
-                                    }
-                                    DropdownMenu(
-                                        expanded = planEditorVM.getGroupSettings()
-                                                && group.index == groupVM.getIndex(),
-                                        onDismissRequest = {
-                                            planEditorVM.setGroupSettings(false)
-                                        }
-                                    ) {
-                                        DropdownMenuItem(
-                                            text = {
-                                                Text(
-                                                    text = "Редактировать"
-                                                )
-                                            },
-                                            onClick = {
-                                                planEditorVM.setGroupDialogType(DialogType.EDIT)
-                                                groupVM.setIndex(group.index)
-                                                planEditorVM.setAddGroup(true)
-                                                planEditorVM.setGroupSettings(false)
-                                            }
-                                        )
-                                        DropdownMenuItem(
-                                            text = {
-                                                Text(
-                                                    text = "Удалить"
-                                                )
-                                            },
-                                            onClick = {
-                                                currentGroup = group
-                                                groupVM.setIndex(group.index)
-                                                groupVM.deleteGroup()
-                                                planEditorVM.setGroupSettings(false)
-                                            }
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            }*/
+            //TODO
         }
     }
 

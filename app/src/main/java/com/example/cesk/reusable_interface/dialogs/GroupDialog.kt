@@ -1,6 +1,5 @@
 package com.example.cesk.reusable_interface.dialogs
 
-import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -38,7 +37,6 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cesk.R
 import com.example.cesk.model.enums.DialogType
-import com.example.cesk.plan_editor.PlanEditorViewModel
 import com.example.cesk.ui.theme.Blue10
 import com.example.cesk.ui.theme.Green10
 import com.example.cesk.view_models.GroupViewModel
@@ -62,11 +60,6 @@ fun GroupDialog(
     ) { uri: Uri? ->
         if(uri != null) {
             imageUri = uri
-            /*val contentResolver = context.contentResolver
-            imageUri?.let {
-            contentResolver.takePersistableUriPermission(it, Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-            contentResolver.takePersistableUriPermission(it, Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            }*/
             Toast.makeText(context, "Изображение успешно добавлено", Toast.LENGTH_LONG).show()
         }
     }
