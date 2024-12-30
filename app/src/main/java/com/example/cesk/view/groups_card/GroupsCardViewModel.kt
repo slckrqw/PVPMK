@@ -1,6 +1,7 @@
 package com.example.cesk.view.groups_card
 
 import androidx.lifecycle.ViewModel
+import com.example.cesk.model.enums.DialogType
 import com.example.cesk.model.state.GroupsCardState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,6 +25,14 @@ class GroupsCardViewModel: ViewModel() {
         _groupsCardState.update {
             it.copy(
                 groupOptions = !it.groupOptions
+            )
+        }
+    }
+
+    fun setGroupDialogType(newType: DialogType){
+        _groupsCardState.update {
+            it.copy(
+                groupDialogType = newType
             )
         }
     }

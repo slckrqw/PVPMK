@@ -42,18 +42,16 @@ import com.example.cesk.view.reusable_interface.ExpandedUniversalButton
 import com.example.cesk.view.reusable_interface.UniversalButton
 import com.example.cesk.ui.theme.Green10
 import com.example.cesk.ui.theme.Purple10
+import com.example.cesk.view.dialogs.GroupDialog
 
 @Composable
 fun GroupsCard(
     onClick: () -> Unit,
     vm: GroupsCardViewModel = viewModel(),
-    groupList: MutableList<Group>,
+    groupList: List<Group>,
     index: Int,
     setIndex: (Int) -> Unit,
-    addGroup: (Boolean) -> Unit,
-    deleteGroup: () -> Unit,
-    setGroupDialogType: (DialogType) -> Unit,
-    changeCurrentGroup: (Group) -> Unit
+    deleteGroup: () -> Unit
 ){
     val state by vm.groupsCardState.collectAsState()
 
@@ -91,6 +89,7 @@ fun GroupsCard(
                 ){
                     ExpandedUniversalButton(
                         onClick = {
+                            vm.setGroupDialogType(DialogType.ADD)
                             vm.onGroupDialogChange()
                         },
                         iconRes = R.drawable.plus_icon,
@@ -184,9 +183,8 @@ fun GroupsCard(
                                     )
                                 },
                                 onClick = {
-                                    setGroupDialogType(DialogType.EDIT)
                                     setIndex(group.index)
-                                    addGroup(true)
+                                    vm.setGroupDialogType(DialogType.EDIT)
                                     vm.onGroupOptionsChange()
                                 }
                             )
@@ -197,7 +195,6 @@ fun GroupsCard(
                                     )
                                 },
                                 onClick = {
-                                    changeCurrentGroup(group)
                                     setIndex(group.index)
                                     deleteGroup()
                                     vm.onGroupOptionsChange()
@@ -208,5 +205,12 @@ fun GroupsCard(
                 }
             }
         }
+    }
+    if(state.groupDialog){
+        GroupDialog(
+            onClick = {vm.onGroupDialogChange()},
+            dialogType = state.groupDialogType,
+            groupViewModel = groupVM
+        )
     }
 }
