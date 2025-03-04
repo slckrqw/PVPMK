@@ -43,6 +43,7 @@ import com.example.cesk.view.reusable_interface.UniversalButton
 import com.example.cesk.ui.theme.Green10
 import com.example.cesk.ui.theme.Purple10
 import com.example.cesk.view.dialogs.GroupDialog
+import com.example.cesk.logic.PvpFile
 
 @Composable
 fun GroupsCard(
@@ -51,7 +52,8 @@ fun GroupsCard(
     groupList: List<Group>,
     index: Int,
     setIndex: (Int) -> Unit,
-    deleteGroup: () -> Unit
+    deleteGroup: () -> Unit,
+    pvpFile: PvpFile
 ){
     val state by vm.groupsCardState.collectAsState()
 
@@ -210,7 +212,7 @@ fun GroupsCard(
         GroupDialog(
             onClick = {vm.onGroupDialogChange()},
             dialogType = state.groupDialogType,
-            groupViewModel = groupVM
+            pvpFile = pvpFile
         )
     }
 }

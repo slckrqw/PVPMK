@@ -1,5 +1,7 @@
 package com.example.cesk.model.state
 
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.example.cesk.model.enums.ConstructionType
 
 data class ConstructionDialogState(
@@ -8,5 +10,5 @@ data class ConstructionDialogState(
     val typeMenuSwitch: Boolean = false,
     val constructionType: ConstructionType = ConstructionType.NOTHING,
     val constructionNote: String = "",
-    val testsList: MutableList<Double> = mutableListOf()
+    val testsList: SnapshotStateList<Double> = mutableStateListOf()
 )

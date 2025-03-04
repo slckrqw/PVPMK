@@ -18,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -26,7 +25,7 @@ import com.example.cesk.navigation.Screen
 import com.example.cesk.view.plan_editor.PlanEditor
 import com.example.cesk.view.start_screen.StartScreen
 import com.example.cesk.ui.theme.CESKTheme
-import com.example.cesk.view_models.GroupViewModel
+import com.example.cesk.logic.PvpFile
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -96,7 +95,7 @@ class MainActivity : ComponentActivity() {
 fun PVPMK(){
 
     val navController = rememberNavController()
-    val groupVM: GroupViewModel = viewModel()
+    val pvpFile = PvpFile()
 
     NavHost(
         navController = navController,
@@ -109,12 +108,12 @@ fun PVPMK(){
         composable(Screen.StartScreen.route){
             StartScreen(
                 navController = navController,
-                groupVM = groupVM
+                pvpFile = pvpFile
             )
         }
         composable(Screen.PlanEditor.route){
            PlanEditor(
-               groupVM = groupVM
+               pvpFile = pvpFile
            )
         }
     }

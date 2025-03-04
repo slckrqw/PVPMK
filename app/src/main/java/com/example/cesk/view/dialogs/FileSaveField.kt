@@ -21,17 +21,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.cesk.logic.saveAsCNC
-import com.example.cesk.logic.saveFile
+import com.example.cesk.logic.file_management.saveAsCNC
+import com.example.cesk.logic.file_management.saveFile
 import com.example.cesk.logic.validate
 import com.example.cesk.model.enums.FileAccessType
 import com.example.cesk.ui.theme.Purple10
-import com.example.cesk.view_models.GroupViewModel
+import com.example.cesk.logic.PvpFile
 
 @Composable
 fun FileSaveField(
-    groupViewModel: GroupViewModel = viewModel(),
+    pvpFile: PvpFile,
     onClick: () -> Unit,
     saveType: FileAccessType
 ){
@@ -87,14 +86,13 @@ fun FileSaveField(
                         if(saveType == FileAccessType.SAVE) {
                             saveFile(
                                 fileName,
-                                groupViewModel.getGroupList(),
+                                pvpFile.getGroupList(),
                                 context
                             )
                         }
                         else saveAsCNC(
                             fileName,
-                            groupViewModel
-                                .getGroupList(),
+                            pvpFile.getGroupList(),
                             context
                         )
                         onClick()

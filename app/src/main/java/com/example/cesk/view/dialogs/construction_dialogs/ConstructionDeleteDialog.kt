@@ -29,9 +29,10 @@ import com.example.cesk.ui.theme.Red10
 
 @Composable
 fun ConstructionDeleteDialog(
-    group: Group = Group(),
-    construction: Construction = Construction(),
-    onClick: () -> Unit = {}
+    group: Group,
+    construction: Construction,
+    onClick: () -> Unit,
+    constructionDialogClose: () -> Unit
 ){
     Dialog(
         onDismissRequest = {
@@ -61,6 +62,7 @@ fun ConstructionDeleteDialog(
                        onClick = {
                              group.constructions.remove(construction)
                              onClick()
+                             constructionDialogClose()
                        },
                        text = "Да",
                        containerColor = Green10
@@ -107,6 +109,5 @@ fun RowScope.AgreeButton(
 @Composable
 fun ConstructionDeletePreview() {
     CESKTheme {
-        ConstructionDeleteDialog()
     }
 }

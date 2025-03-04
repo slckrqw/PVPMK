@@ -12,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -31,8 +32,7 @@ import kotlinx.coroutines.android.awaitFrame
 @Composable
 fun EnduranceDialog(
     onClick: () -> Unit = {},
-    testsList: MutableList<Double>,
-    construction: Construction
+    testsList: SnapshotStateList<Double>
 ){
     var endurance by remember{
         mutableStateOf("")
@@ -76,8 +76,6 @@ fun EnduranceDialog(
                 onDone = {
                     if(endurance != "") {
                        testsList
-                           .add(endurance.toDouble())
-                       construction.tests
                            .add(endurance.toDouble())
                     }
                     onClick()

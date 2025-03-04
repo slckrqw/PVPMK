@@ -17,27 +17,25 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cesk.model.enums.ConstructionType
-import com.example.cesk.view.plan_editor.PlanEditorViewModel
 import com.example.cesk.ui.theme.Orange10
-import com.example.cesk.view_models.GroupViewModel
 import java.io.IOException
 
 @Composable
 fun MakePoint(
-    groupViewModel: GroupViewModel = viewModel(),
-    planEditorViewModel: PlanEditorViewModel = viewModel(),
-    modifier: Modifier
+    pvpFile: PvpFile,
+    pointsVisibility: Boolean,
+    modifier: Modifier,
+    canvasScale: Float
 ){
     val textMeasurer = rememberTextMeasurer()
 
     val context = LocalContext.current 
     val contentResolver: ContentResolver = context.contentResolver
 
-    val groupImage: Uri? = if(groupViewModel.getCurrentGroup()?.image == "null"){
+    val groupImage: Uri? = if(pvpFile.getCurrentGroup()?.image == "null"){
         null
-    }else Uri.parse(groupViewModel.getCurrentGroup()?.image)
+    }else Uri.parse(pvpFile.getCurrentGroup()?.image)
 
     var imageBitmap: ImageBitmap? = null
     try {
@@ -51,13 +49,13 @@ fun MakePoint(
     Canvas(
         modifier = modifier,
         onDraw = {
-            scale(planEditorViewModel.getCanvasScale()) {
+            scale(canvasScale) {
                 if (imageBitmap != null) {
                     drawImage(
                         imageBitmap
                     )
                 }
-                groupViewModel.getCurrentGroup()?.constructions?.forEach {
+                pvpFile.getCurrentGroup()?.constructions?.forEach {
                     val textLayout = textMeasurer.measure(
                         text =
                         when(it.type) {
@@ -72,7 +70,7 @@ fun MakePoint(
                         } + it.averageEndurance.toString(),
                         style = TextStyle(fontSize = 28.sp)
                     )
-                    if(planEditorViewModel.getPointsVisibility()) {
+                    if(pointsVisibility) {
                         drawRect(
                             color = Color.White,
                             topLeft = Offset(it.point.x!!, it.point.y!!),

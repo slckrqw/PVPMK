@@ -52,6 +52,9 @@ fun ConstructionAddDialog(
     dialogType: DialogType,
     vm: ConstructionDialogViewModel = viewModel()
 ){
+    if(dialogType == DialogType.EDIT){
+        vm.loadState(construction)
+    }
     val dialogState by vm.constructionDialogState.collectAsState()
 
     Dialog(
@@ -60,6 +63,7 @@ fun ConstructionAddDialog(
                 group.constructions.remove(construction)
             }
             onCLick()
+            vm.flushState()
         }
     ) {
         Card(
@@ -83,7 +87,7 @@ fun ConstructionAddDialog(
                                 .combinedClickable(
                                     onClick = {},
                                     onLongClick = {
-                                        dialogState.testsList.removeAt(it)
+                                        vm.onTestDelete(it)
                                     }
                                 )
                         )
@@ -99,8 +103,7 @@ fun ConstructionAddDialog(
                     item {
                         UniversalButton(
                             onClick = {
-                                vm
-                                    .onEnduranceAdd()
+                                vm.onEnduranceAdd()
                             },
                             iconRes = R.drawable.plus_icon
                         )
@@ -115,8 +118,7 @@ fun ConstructionAddDialog(
                 ) {
                     Button(
                         onClick = {
-                            vm
-                                .onTypeSwitch()
+                            vm.onTypeSwitch()
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                         border = BorderStroke(1.dp, Color.Black),
@@ -135,8 +137,7 @@ fun ConstructionAddDialog(
                         DropdownMenu(
                             expanded = dialogState.typeMenuSwitch,
                             onDismissRequest = {
-                                vm
-                                    .onTypeSwitch()
+                                vm.onTypeSwitch()
                             }
                         ) {
                             ConstructionTypeDropDownItem(
@@ -192,7 +193,11 @@ fun ConstructionAddDialog(
                             construction.note = dialogState.constructionNote
                             construction.averageEndurance = Math.round(vm.getAverageEndurance() * 10.0) / 10.0 //round to tenths
                             construction.tests = dialogState.testsList
+                            if(dialogType == DialogType.ADD) {
+                                group.constructions.add(construction)
+                            }
                             onCLick()
+                            vm.flushState()
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = Blue10),
                         modifier = Modifier
@@ -229,11 +234,9 @@ fun ConstructionAddDialog(
     if(dialogState.enduranceAddDialog){
         EnduranceDialog(
             onClick = {
-                vm
-                    .onEnduranceAdd()
+                vm.onEnduranceAdd()
             },
-            testsList = dialogState.testsList,
-            construction = construction
+            testsList = dialogState.testsList
         )
     }
     if(dialogState.constructionDeleteDialog){
@@ -242,6 +245,10 @@ fun ConstructionAddDialog(
             construction = construction,
             onClick = {
                 vm.onConstructionDelete()
+            },
+            constructionDialogClose = {
+                onCLick()
+                vm.flushState()
             }
         )
     }

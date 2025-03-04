@@ -34,19 +34,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cesk.R
 import com.example.cesk.model.enums.DialogType
 import com.example.cesk.ui.theme.Blue10
 import com.example.cesk.ui.theme.Green10
-import com.example.cesk.view_models.GroupViewModel
+import com.example.cesk.logic.PvpFile
 
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun GroupDialog(
     onClick: () -> Unit = {},
-    groupViewModel: GroupViewModel = viewModel(),
+    pvpFile: PvpFile,
     dialogType: DialogType = DialogType.ADD
 ){
     val context = LocalContext.current
@@ -71,7 +70,7 @@ fun GroupDialog(
                     ""
                 }
                 DialogType.EDIT -> {
-                    groupViewModel.getCurrentGroup()?.name?:""
+                    pvpFile.getCurrentGroup()?.name?:""
                 }
             }
         )
@@ -111,7 +110,7 @@ fun GroupDialog(
                                 launcher.launch("image/*")
                             },
                             onLongClick = {
-                                groupViewModel.getCurrentGroup()?.image = "null"
+                                pvpFile.getCurrentGroup()?.image = "null"
                                 imageUri = null
                                 Toast.makeText(
                                     context,
@@ -137,20 +136,20 @@ fun GroupDialog(
                 Button(
                     onClick = {
                         if(dialogType == DialogType.ADD){
-                            groupViewModel.addGroup(groupName, imageUri.toString())
+                            pvpFile.addGroup(groupName, imageUri.toString())
                             onClick()
                         }
                         else{
                            if(imageUri != null){
-                               groupViewModel
+                               pvpFile
                                    .editGroup(
                                        groupName,
                                        imageUri.toString()
                                    )
                            }
                            else{
-                               groupViewModel.getCurrentGroup()?.image?.let {
-                                   groupViewModel
+                               pvpFile.getCurrentGroup()?.image?.let {
+                                   pvpFile
                                        .editGroup(
                                            groupName,
                                            it

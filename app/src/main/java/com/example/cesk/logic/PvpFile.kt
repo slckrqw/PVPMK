@@ -1,10 +1,9 @@
-package com.example.cesk.view_models
+package com.example.cesk.logic
 
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.lifecycle.ViewModel
 import com.example.cesk.model.Group
 
-class GroupViewModel: ViewModel() {
+class PvpFile {
     private var groupList: MutableList<Group> = mutableListOf()
     private var currentIndex = mutableIntStateOf(0)
 

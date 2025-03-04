@@ -1,6 +1,10 @@
 package com.example.cesk.view.dialogs.construction_dialogs
 
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
+import com.example.cesk.model.Construction
 import com.example.cesk.model.enums.ConstructionType
 import com.example.cesk.model.state.ConstructionDialogState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -59,6 +63,32 @@ class ConstructionDialogViewModel: ViewModel() {
     {
         return _constructionDialogState.value.testsList.let{
             it.sum()/it.size
+        }
+    }
+
+    fun onTestDelete(index: Int){
+        _constructionDialogState.value.testsList.removeAt(index)
+    }
+
+    fun loadState(construction: Construction){
+        val tempList: SnapshotStateList<Double> = construction.tests.toMutableStateList()
+
+        _constructionDialogState.update {
+            it.copy(
+                constructionType = construction.type,
+                constructionNote = construction.note,
+                testsList = tempList
+            )
+        }
+    }
+
+    fun flushState(){
+        _constructionDialogState.update {
+            it.copy(
+                constructionType = ConstructionType.NOTHING,
+                constructionNote = "",
+                testsList = mutableStateListOf()
+            )
         }
     }
 }

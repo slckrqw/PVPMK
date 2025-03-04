@@ -37,6 +37,7 @@ import com.example.cesk.ui.theme.Purple10
 import com.example.cesk.view.dialogs.FileAccessDialog
 import com.example.cesk.view.reusable_interface.ExpandedUniversalButton
 import com.example.cesk.view.reusable_interface.UniversalButton
+import com.example.cesk.logic.PvpFile
 
 @Composable
 fun ToolsCard(
@@ -44,7 +45,8 @@ fun ToolsCard(
     savePDF: () -> Unit,
     changePointsVisibility: () -> Unit,
     pointsVisibility: Boolean,
-    vm: ToolsCardViewModel = viewModel()
+    vm: ToolsCardViewModel = viewModel(),
+    pvpFile: PvpFile
 ){
     fun openFileDialog(dialogType: FileAccessType){
         vm.setFileAccessType(dialogType)
@@ -53,10 +55,15 @@ fun ToolsCard(
 
     val state by vm.toolsCardState.collectAsState()
 
+    val cardWidth = when(state.toolsCardView){
+        false -> 50.dp
+        true -> 200.dp
+    }
+
     Card(
         modifier = Modifier
             .fillMaxHeight()
-            .width(50.dp),
+            .width(cardWidth),
         shape = RoundedCornerShape(topEnd = 10.dp, bottomEnd = 10.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
@@ -170,14 +177,14 @@ fun ToolsCard(
                     )
                     ExpandedUniversalButton(
                         onClick = {
-                            openFileDialog(FileAccessType.OPEN)
+                            openFileDialog(FileAccessType.SAVE)
                         },
                         iconRes = R.drawable.save_as_pdf_icon,
                         text = "Сохранить файл"
                     )
                     ExpandedUniversalButton(
                         onClick = {
-                            openFileDialog(FileAccessType.SAVE)
+                            openFileDialog(FileAccessType.OPEN)
                         },
                         iconRes = R.drawable.open_file,
                         text = "Открыть файл"
@@ -239,7 +246,7 @@ fun ToolsCard(
             onClick = {
                 vm.onFileDialogChange()
             },
-            groupVM = ,//TODO
+            pvpFile = pvpFile,
             accessType = state.fileAccessType
         )
     }

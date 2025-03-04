@@ -31,7 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.toSize
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cesk.logic.MakePoint
-import com.example.cesk.logic.savePdf
+import com.example.cesk.logic.file_management.savePdf
 import com.example.cesk.model.Construction
 import com.example.cesk.model.Group
 import com.example.cesk.model.enums.DialogType
@@ -39,18 +39,16 @@ import com.example.cesk.ui.theme.CESKTheme
 import com.example.cesk.view.dialogs.construction_dialogs.ConstructionAddDialog
 import com.example.cesk.view.groups_card.GroupsCard
 import com.example.cesk.view.tools_card.ToolsCard
-import com.example.cesk.view_models.GroupViewModel
+import com.example.cesk.logic.PvpFile
 
 @Composable
 fun PlanEditor(
-    groupVM: GroupViewModel = viewModel(),
+    pvpFile: PvpFile,
     vm: PlanEditorViewModel = viewModel(),
 ) {
     val state by vm.planEditorState.collectAsState()
 
-    val currentGroup by remember{
-        mutableStateOf(Group())
-    }
+    val currentGroup = pvpFile.getCurrentGroup()
     var currentConstruction by remember{
         mutableStateOf(Construction())
     }
@@ -64,6 +62,7 @@ fun PlanEditor(
     var offsetX by remember { mutableFloatStateOf(0f) }
     var offsetY by remember { mutableFloatStateOf(0f) }
     var imageSize by remember { mutableStateOf(Size.Zero) }
+
     val canvasModifier = Modifier
         .fillMaxSize()
         .pointerInput(Unit) {
@@ -71,18 +70,7 @@ fun PlanEditor(
                 offsetX = offset.x
                 offsetY = offset.y
 
-                if (currentGroup.constructions.isEmpty()) {
-                    val newConstruction = Construction()
-
-                    newConstruction.point.x = offsetX
-                    newConstruction.point.y = offsetY
-                    currentGroup.constructions
-                        .add(newConstruction)
-
-                    currentConstruction = newConstruction
-                    vm.setConstructionDialogType(DialogType.ADD)
-                    vm.onConstructionDialogChange()
-                } else {
+                if (currentGroup != null) {
                     if (currentGroup.constructions
                             .none {
                                 (it.point.x!! <= offsetX + 50 && it.point.x!! >= offsetX - 50)
@@ -90,11 +78,8 @@ fun PlanEditor(
                             }
                     ) {
                         val newConstruction = Construction()
-
                         newConstruction.point.x = offsetX
                         newConstruction.point.y = offsetY
-                        currentGroup.constructions
-                            .add(newConstruction)
 
                         currentConstruction = newConstruction
                         vm.setConstructionDialogType(DialogType.ADD)
@@ -135,10 +120,12 @@ fun PlanEditor(
             .fillMaxSize()
             .background(Color.Gray)
     ) {
-        if(groupVM.getIndex() != 0) {
+        if(pvpFile.getIndex() != 0) {
             MakePoint(
                 modifier = canvasModifier,
-                groupViewModel = groupVM
+                pvpFile = pvpFile,
+                pointsVisibility = state.pointsVisibility,
+                canvasScale = state.canvasScale
             )
         }
         Row(
@@ -150,40 +137,44 @@ fun PlanEditor(
                     vm.onGroupsCardViewChange()
                 },
                 savePDF = {
-                    groupVM.getCurrentGroup()?.let {
+                    pvpFile.getCurrentGroup()?.let {
                         savePdf(context, picture, it)
                     }
                 },
                 changePointsVisibility = {
                     vm.onPointsVisibilityChange()
                 },
-                pointsVisibility = state.pointsVisibility
+                pointsVisibility = state.pointsVisibility,
+                pvpFile = pvpFile
             )
             if(state.groupsCardView){
                 GroupsCard(
                     onClick = {
                         vm.onGroupsCardViewChange()
                     },
-                    groupList = groupVM.getGroupList(),
-                    index = groupVM.getIndex(),
+                    groupList = pvpFile.getGroupList(),
+                    index = pvpFile.getIndex(),
                     setIndex = {
-                        groupVM.setIndex(it)
+                        pvpFile.setIndex(it)
                     },
                     deleteGroup = {
-                        groupVM.deleteGroup()
+                        pvpFile.deleteGroup()
                     },
+                    pvpFile = pvpFile
                 )
             }
         }
     }
 
     if (state.constructionDialog) {
-        ConstructionAddDialog(
-            onCLick = { vm.onConstructionDialogChange() },
-            construction = currentConstruction,
-            dialogType = state.constructionDialogType,
-            group = currentGroup
-        )
+        if (currentGroup != null) {
+            ConstructionAddDialog(
+                onCLick = { vm.onConstructionDialogChange() },
+                construction = currentConstruction,
+                dialogType = state.constructionDialogType,
+                group = currentGroup
+            )
+        }
     }
 }
 
@@ -191,6 +182,6 @@ fun PlanEditor(
 @Composable
 fun EditorPreview() {
     CESKTheme {
-        PlanEditor()
+
     }
 }

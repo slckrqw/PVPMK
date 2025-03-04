@@ -29,19 +29,18 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.cesk.R
 import com.example.cesk.navigation.Screen
 import com.example.cesk.view.reusable_interface.RecentFilesBox
 import com.example.cesk.ui.theme.CESKTheme
 import com.example.cesk.ui.theme.Purple10
-import com.example.cesk.view_models.GroupViewModel
+import com.example.cesk.logic.PvpFile
 
 @Composable
 fun StartScreen(
     navController: NavController,
-    groupVM: GroupViewModel = viewModel()
+    pvpFile: PvpFile
 ){
 
     Box(
@@ -61,8 +60,8 @@ fun StartScreen(
                 )
                 Button(
                     onClick = {
-                        groupVM.setIndex(0)
-                        groupVM.setGroupList(mutableListOf())
+                        pvpFile.setIndex(0)
+                        pvpFile.setGroupList(mutableListOf())
 
                         navController.navigate(Screen.PlanEditor.route)
                     },
@@ -82,7 +81,7 @@ fun StartScreen(
                     navController
                         .navigate(Screen.PlanEditor.route)
                 },
-                groupViewModel = groupVM
+                pvpFile = pvpFile
             )
         }
     }

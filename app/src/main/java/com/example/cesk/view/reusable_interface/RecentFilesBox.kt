@@ -25,16 +25,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.cesk.logic.openFile
+import com.example.cesk.logic.file_management.openFile
 import com.example.cesk.ui.theme.Purple10
-import com.example.cesk.view_models.GroupViewModel
+import com.example.cesk.logic.PvpFile
 import java.io.File
 
 @Composable
 fun RecentFilesBox(
     onClick: () -> Unit = {},
-    groupViewModel: GroupViewModel = viewModel()
+    pvpFile: PvpFile
 ){
 
     val context = LocalContext.current
@@ -77,7 +76,7 @@ fun RecentFilesBox(
                                         recentFiles[file].nameWithoutExtension,
                                         context
                                     )?.let { groupList ->
-                                        groupViewModel.setGroupList(
+                                        pvpFile.setGroupList(
                                             groupList
                                         )
                                     }
